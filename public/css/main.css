@@ -1,0 +1,63 @@
+/*
+Need for assignment:
+Image -
+Table - check
+List - check
+Ids -
+Classes - check
+Multiple classes on one tag - check
+positioning -
+font styling -
+hover/active - check
+theme - check
+*/
+
+/* body
+{
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+body > article
+{
+  text-align: center;
+}
+
+h1
+{
+  margin: 10px 0;
+}
+
+.header-note
+{
+  margin: 5px 0 0 0;
+}
+
+.copyright
+{
+  font-size: 0.8em;
+  margin: 3px 0 0 0;
+}
+ */
+
+* {background-color:#404040}
+
+* {color:#024959}
+* {font-family:Lucida Sans Unicode}
+
+.textObject {background-color: #F2EFDC}
+
+li, td, th {background-color: #F2EFDC}
+
+li:hover {color:#F24C27}
+
+.siteTitle {}
+
+
+.basicDesc {}
+
+.left {float:left}
+
+.right {float: right}
+
+
+table {padding:20px}
