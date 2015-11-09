@@ -1,68 +1,15 @@
 /* Amanda Adkins */
 
 * {
-  background-color: #404040
-}
-.separatedUnit {
-  border: solid;
-  border-width: 0.5em;
-  border-color: #F24C27;
-  padding: 0.5em;
-  border-radius: 0.5em;
-  background-color: #F2EFDC;
-}
-img {
-  width: 95%
-}
-#basicInfo {
-  float: left;
-  width: 25%;
-}
-#experienceDetails {
-  float: right;
-  width: 68%;
-}
-#caption {
-  color:#037E8C;
-  margin:0;
-  padding:0em 3em 0em 0em;
-  font-style: oblique;
-  font-size: 0.75em;
-  text-align: right;
-}
-* {
-  color: #024959
-}
-* {
-  font-family: Lucida Sans Unicode
+  background-color: #404040;
+  color: #024959;
+  font-family: Lucida Sans Unicode;
 }
 body {
   margin: 1em
 }
-.textObject {
-  background-color: #F2EFDC;
-  color: #024959
-}
-strong {
-  background-color: #F2EFDC;
-  color: #024959
-}
-#langDetails {
-  float:right;
-  width:45%;
-}
-#courseDetails {
-  float:left;
-  width:45%;
-}
-#siteTitle {
-  border: solid;
-  border-width: 0.5em;
-  border-color: #F24C27;
-  padding: 0.5em;
-  border-radius: 0.5em;
-  text-align: center;
-  font-family: Georgia;
+table {
+  padding: 1em;
 }
 li, td, th {
   background-color: #F2EFDC
@@ -74,23 +21,73 @@ tr {
 li:hover {
   color: #F24C27
 }
-table {
-  padding: 1em;
+strong {
+  background-color: #F2EFDC;
+  color: #024959
+}
+.textObject {
+  background-color: #F2EFDC;
+  color: #024959
+}
+.separatedUnit {
+  border: solid;
+  border-width: 0.5em;
+  border-color: #F24C27;
+  padding: 0.5em;
+  border-radius: 0.5em;
+  background-color: #F2EFDC;
 }
 
+#siteTitle {
+  border: solid;
+  border-width: 0.5em;
+  border-color: #F24C27;
+  padding: 0.5em;
+  border-radius: 0.5em;
+  text-align: center;
+  font-family: Georgia;
+}
+
+#basicInfo {
+  float: left;
+  width: 25%;
+}
+#bigImg {
+  width: 95%
+}
+#caption {
+  color: #037E8C;
+  margin: 0;
+  padding-right: 3em;
+  font-style: oblique;
+  font-size: 0.75em;
+  text-align: right;
+}
+#experienceDetails {
+  float: right;
+  width: 68%;
+}
+#langDetails {
+  float: right;
+  width: 45%;
+}
+#courseDetails {
+  float: left;
+  width: 45%;
+}
+#photoPanelTitle {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
 .imageTile:hover {
   width: 20%;
 }
-
 .imageTile {
-  width:10%;
+  width: 10%;
+  vertical-align: top;
 }
 #imagesPanel {
   float: right;
   width: 68%;
   margin-top: 1em;
-}
-#photoPanelTitle {
-  margin-top:0.2em;
-  margin-bottom:0.2em;
 }
