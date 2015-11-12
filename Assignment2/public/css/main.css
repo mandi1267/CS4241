@@ -1,0 +1,44 @@
+/* Amanda Adkins */
+
+* {
+  background-color: #404040;
+  color: #024959;
+  font-family: Lucida Sans Unicode;
+}
+body {
+  margin: 1em
+}
+table {
+  padding: 1em;
+  background-color: #F2EFDC;
+}
+label, td, th, p, header, h2, form {
+  background-color: #F2EFDC;
+}
+input {
+  background-color: #FFFFFF;
+  color: #024959
+}
+tr {
+  outline: solid #024959 .1em;
+  border-width: .1em;
+}
+.textObject {
+  background-color: #F2EFDC;
+  color: #024959
+}
+.separatedUnit {
+  border: solid;
+  border-width: 0.5em;
+  border-color: #F24C27;
+  padding: 0.5em;
+  border-radius: 0.5em;
+  background-color: #F2EFDC;
+}
+.textIn {
+  width: 15em;
+}
+
+#results {
+  margin-top: 1em;
+}
