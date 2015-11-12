@@ -1,77 +1,71 @@
 var express = require('express');
 var path = require('path');
 
-var movies = ['jaws', 'jaws1', 'Monty Python'];
+//var movies = ['jaws', 'jaws1', 'Monty Python'];
+
+var moviesList = [];
+moviesList.push(new Movie("Jaws", "Action", "1975"));
+moviesList.push(new Movie("The Little Mermaid", "Children's", "1989"));
+moviesList.push(new Movie("The Avengers", "Action", "2012"));
+moviesList.push(new Movie("Django Unchained", "Western", "2012"));
 
 var app = express();
 var port = process.env.PORT || 3000;
 
 var fs = require('fs');
 
-app.use(express.static(path.join(__dirname, '/public')));
-
 app.get('/index', function(req, res) {
   var query = req.query;
   if (typeof query.search != 'undefined') {
-    queryMovie(res, query.search);
-  } else if (typeof query.add != 'undefined') {
-    addMovie(query.add);
-    res.sendFile(path.join(__dirname, 'public/index.html')); //)('chair, table, tacos, funyuns, apple');
+    if (query.search != "") {
+      queryMovie(res, query.search, query.fieldToSearch);
+    }
+  } else if (typeof query.addTitle != 'undefined') {
+    addMovie(query.addTitle, query.addGenre, query.addYear);
+    sendHTMLWithMovies(res, moviesList);
   } else {
-    res.sendFile(path.join(__dirname, 'public/index.html')); //)('chair, table, tacos, funyuns, apple');
+    sendHTMLWithMovies(res, moviesList);
   }
 });
-
-function queryMovie(res, searchQuery) {
-  matchingMovies = movies.filter(checkNameInTitle(searchQuery));
-  if (matchingMovies.length != 0) {
-    console.log(matchingMovies);
-
-    var fileStream = fs.createReadStream(path.join(__dirname, 'public/index.html'));
-
-    var htmlString;
-
-    fileStream.on('data', function(data) {
-      console.log(typeof data);
-      htmlString = data.toString();
-      //res.write(data);
-    });
-
-    fileStream.on('end', function() {
-    //  res.end();
-        moviesString = generateHTMLTableRowsBasedOnMovies(matchingMovies);
-        console.log(moviesString);
-        resultHTML = modifyTableContentsInFile(htmlString, moviesString);
-        console.log(resultHTML);
-        res.send(resultHTML);
-    })
-
-
-  } else {
-    res.send("No movies containing " + searchQuery + " in title.");
-    //res.sendFile(path.join(__dirname, 'public/index.html')); //)('chair, table, tacos, funyuns, apple');
-  }
-}
-
-function addMovie(movieToAdd) {
-  if (movieToAdd != "") {
-    if (movies.indexOf(movieToAdd) == -1) {
-      movies.push(movieToAdd);
-
-    } else {
-      console.log("Dont add duplicate");
-    }
-  }
-  // redisplay all movies
-}
 
 app.get('/', function(req, res) {
-  console.log("Hello\n");
-  var query = req.query;
-  console.log(query);
-  res.sendFile(path.join(__dirname, '/public/index.html'));
-
+  sendHTMLWithMovies(res, moviesList);
 });
+
+app.use(express.static(path.join(__dirname, '/public')));
+
+function queryMovie(res, searchQuery, searchField) {
+  if (searchField === "title") {
+    matchingMovies = moviesList.filter(checkNameInTitle(searchQuery));
+  } else if (searchField === "genre") {
+    matchingMovies = moviesList.filter(checkGenre(searchQuery));
+  } else if (searchField === "year") {
+    matchingMovies = moviesList.filter(checkMatchingYear(searchQuery));
+  }
+  if (matchingMovies.length != 0) {
+    sendHTMLWithMovies(res, matchingMovies);
+  } else {
+    sendString = '<p>No movies matching "' + searchQuery + '" in ' + searchField + '</p>';
+    returnNoMovies(res, sendString);
+  }
+}
+
+function addMovie(movieTitle, movieGenre, movieYear) {
+  newMovie = new Movie(movieTitle, movieGenre, movieYear);
+  if (!movieInList(newMovie)) {
+    moviesList.push(newMovie);
+  }
+}
+
+function movieInList(newMovie) {
+  for (var i = 0; i < moviesList.length; i++) {
+    movie = moviesList[i];
+    if ((movie.movieTitle === newMovie.movieTitle) && (movie.genre === newMovie.genre) && (movie.year === newMovie.year)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 app.listen(port, function() {
   console.log('App is listening on port ' + port);
@@ -79,20 +73,73 @@ app.listen(port, function() {
 
 function checkNameInTitle(name) {
   return function(obj) {
-    return obj.indexOf(name) >= 0;
+    return obj.movieTitle.indexOf(name) >= 0;
+  }
+}
+
+function checkGenre(selectedGenre) {
+  return function(obj) {
+    return obj.genre === selectedGenre;
+  }
+}
+
+function checkMatchingYear(selectedYear) {
+  return function(obj) {
+    return obj.year === selectedYear;
   }
 }
 
 function generateHTMLTableRowsBasedOnMovies(moviesToSerialize) {
   var i;
-  var tableString="";
-  for (i = 0; i < moviesToSerialize.length; i++) {
-    tableString += "<tr><td>" + moviesToSerialize[i] + "</td></tr>\n";
-  }
+  var tableString = '<table id="resultsTable">';
+  tableString += "<thead><tr><th>Movie Title</th><th>Genre</th><th>Year</th></tr></thead>";
+  tableString += "<tbody>"
+  moviesToSerialize.forEach(function(movie) {
+    tableString += generateMovieRowForTable(movie);
+  });
+  tableString += '</tbody></table>'
   return tableString;
 }
 
 function modifyTableContentsInFile(originalString, replacementText) {
-  console.log(typeof originalString);
-  return originalString.replace('<table id="resultsTable">', '<table id="resultsTable">' + replacementText);
+  return originalString.replace('<h2>Movies</h2>', '<h2>Movies</h2>' + replacementText);
+}
+
+function generateMovieRowForTable(movie) {
+  return "<tr><td>" + movie.movieTitle + "</td><td>" + movie.genre + "</td><td>" + movie.year + "</td></tr>"
+}
+
+function sendHTMLWithMovies(res, moviesList) {
+  var fileStream = fs.createReadStream(path.join(__dirname, 'public/index.html'));
+  var htmlString;
+
+  fileStream.on('data', function(data) {
+    htmlString = data.toString();
+  });
+
+  fileStream.on('end', function() {
+    moviesString = generateHTMLTableRowsBasedOnMovies(moviesList);
+    resultHTML = modifyTableContentsInFile(htmlString, moviesString);
+    res.send(resultHTML);
+  });
+}
+
+function Movie(movieTitle, genre, year) {
+  this.movieTitle = movieTitle;
+  this.genre = genre;
+  this.year = year;
+}
+
+function returnNoMovies(res, replacementText) {
+  var fileStream = fs.createReadStream(path.join(__dirname, 'public/index.html'));
+  var htmlString;
+
+  fileStream.on('data', function(data) {
+    htmlString = data.toString();
+  });
+
+  fileStream.on('end', function() {
+    resultHTML = modifyTableContentsInFile(htmlString, replacementText);
+    res.send(resultHTML);
+  });
 }

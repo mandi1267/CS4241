@@ -12,15 +12,24 @@
   <div class="separatedUnit" id="searchUnit">
     <h2>Search in list</h2>
     <form method="get" action="index">
-      <label for="search">Type query here:<br></label>
+      <label for="search">Type query here:
+        <br>
+      </label>
       <input class="textIn" id="search" name="search" type=text size="30" />
+      <select name="fieldToSearch">
+        <option value="title">Title</option>
+        <option value="genre">Genre</option>
+        <option value="year">Year</option>
+      </select>
       <input type="submit" />
       <input type="reset" />
     </form>
     <br>
     <form method="get" action="index">
       <label for="add movie">Add a New Movie:<br></label>
-      <input class="textIn" id="addMovie" name="add" type=text size="30" />
+      <input class="textIn" id="addMovieTitle" placeholder="Movie Title" name="addTitle" type=text size="30" required />
+      <input class="textIn" id ="addMovieGenre" placeholder="Genre" name="addGenre" type=text size="30" required>
+      <input class="textIn" id ="addMovieYear" placeholder="Year" name="addYear" type=number size="30" required/>
       <input type="submit" />
       <input type="reset" />
     </form>
@@ -28,10 +37,7 @@
 
   <div class="separatedUnit" id="results">
     <h2>Movies</h2>
-    <table id="resultsTable">
 
-
-    </table>
   </div>
 
 
