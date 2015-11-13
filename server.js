@@ -1,7 +1,8 @@
+
+// Author: Amanda Adkins
+//Website: https://aaadkins-cs4241-assignment3.herokuapp.com/
 var express = require('express');
 var path = require('path');
-
-//var movies = ['jaws', 'jaws1', 'Monty Python'];
 
 var moviesList = [];
 moviesList.push(new Movie("Jaws", "Action", "1975"));
