@@ -5,15 +5,23 @@ var express = require('express');
 var path = require('path');
 
 var moviesList = [];
-moviesList.push(new Movie("Jaws", "Action", "1975"));
+/*moviesList.push(new Movie("Jaws", "Action", "1975"));
 moviesList.push(new Movie("The Little Mermaid", "Children's", "1989"));
 moviesList.push(new Movie("The Avengers", "Action", "2012"));
-moviesList.push(new Movie("Django Unchained", "Western", "2012"));
+moviesList.push(new Movie("Django Unchained", "Western", "2012")); */
 
 var app = express();
 var port = process.env.PORT || 3000;
+var bodyParser = require('body-parser');
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 var fs = require('fs');
+
+readMoviesFile();
+/*var fileStream = fs.createWriteStream(path.join(__dirname, 'public/results.txt'));
+fileStream.write(JSON.stringify(moviesList)); */
+
 
 app.get('/index', function(req, res) {
   var query = req.query;
@@ -29,7 +37,21 @@ app.get('/index', function(req, res) {
   }
 });
 
+app.post('/index', function(req, res) {
+  console.log(req.body.addTitle);
+  console.log()
+  if (req.body.addTitle === undefined) {
+    deleteMovies(req)
+  }
+  else {
+    addMovie(req.body.addTitle, req.body.addGenre, req.body.addYear);
+  }
+  updateMoviesFile();
+  sendHTMLWithMovies(res, moviesList);
+});
+
 app.get('/', function(req, res) {
+
   sendHTMLWithMovies(res, moviesList);
 });
 
@@ -72,6 +94,18 @@ app.listen(port, function() {
   console.log('App is listening on port ' + port);
 });
 
+function deleteMovies(req) {
+  for (var j = moviesList.length -1; j >= 0; j--) {
+    currentMovie = moviesList[j]
+    removeTag = removeSpacesFromString(currentMovie.movieTitle + currentMovie.year);
+    var selectVar = eval("req.body.select" + removeTag);
+    if (selectVar === "on") {
+      console.log("delete " + moviesList[j].movieTitle);
+      moviesList.splice(j, 1);
+    }
+  }
+}
+
 function checkNameInTitle(name) {
   return function(obj) {
     return obj.movieTitle.indexOf(name) >= 0;
@@ -92,13 +126,17 @@ function checkMatchingYear(selectedYear) {
 
 function generateHTMLTableRowsBasedOnMovies(moviesToSerialize) {
   var i;
-  var tableString = '<table id="resultsTable">';
-  tableString += "<thead><tr><th>Movie Title</th><th>Genre</th><th>Year</th></tr></thead>";
+  var tableString = '<form method="post" action="index">'
+  tableString += '<table id="resultsTable">';
+  tableString += "<thead><tr><th>Movie Title</th><th>Genre</th><th>Year</th><th>Select</th></tr></thead>";
   tableString += "<tbody>"
-  moviesToSerialize.forEach(function(movie) {
-    tableString += generateMovieRowForTable(movie);
-  });
+  for (var j = 0; j < moviesList.length; j++) {
+    movie = moviesList[j];
+    tableString += generateMovieRowForTable(movie, j);
+  }
   tableString += '</tbody></table>'
+  tableString += '<input id="deleteButton" type="submit" name="delete" value="Delete Selected Movies"/>'
+  tableString += '</form>'
   return tableString;
 }
 
@@ -106,8 +144,11 @@ function modifyTableContentsInFile(originalString, replacementText) {
   return originalString.replace('<h2>Movies</h2>', '<h2>Movies</h2>' + replacementText);
 }
 
-function generateMovieRowForTable(movie) {
-  return "<tr><td>" + movie.movieTitle + "</td><td>" + movie.genre + "</td><td>" + movie.year + "</td></tr>"
+function generateMovieRowForTable(movie, movieIndex) {
+  tableString = "<tr><td>" + movie.movieTitle + "</td><td>" + movie.genre + "</td><td>" + movie.year + "</td>"
+  tableString += '<td><input type="checkbox" name="select' + removeSpacesFromString(movie.movieTitle + movie.year) + '"/></td>'
+  tableString += '</tr>'
+  return tableString
 }
 
 function sendHTMLWithMovies(res, moviesList) {
@@ -143,4 +184,18 @@ function returnNoMovies(res, replacementText) {
     resultHTML = modifyTableContentsInFile(htmlString, replacementText);
     res.send(resultHTML);
   });
+}
+
+function updateMoviesFile() {
+  var fileStream = fs.createWriteStream(path.join(__dirname, 'public/results.txt'));
+  fileStream.write(JSON.stringify(moviesList));
+}
+
+function readMoviesFile() {
+  moviesString = fs.readFileSync(path.join(__dirname, 'public/results.txt'));
+  moviesList = JSON.parse(moviesString);
+}
+
+function removeSpacesFromString(editString) {
+  return editString.replace(/\s+/g, '');
 }

@@ -8,6 +8,7 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "body-parser": "^1.14.1",
     "express": "^4.9.8"
   }
 }

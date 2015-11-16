@@ -9,8 +9,8 @@
 #technicalAcheivementDescription {
   margin-left: 1em;
   float: right;
-  min-width: 30%;
-  max-width: 50%;
+  min-width: 20%;
+  max-width: 45%;
 
 }
 #results {
@@ -29,12 +29,12 @@ table {
 label, td, th, p, header, h2, form {
   background-color: #F2EFDC;
 }
-input, select, option {
+input, select, option, button {
   background-color: #FFFFFF;
   color: #024959
 }
 td {
-  width: 10em;
+  width: 8em;
 }
 td, th {
   outline: solid #024959 .1em;
@@ -56,4 +56,8 @@ td, th {
 }
 .textIn {
   width: 15em;
+}
+#deleteButton {
+  float:right;
+  margin-right: 1em
 }
