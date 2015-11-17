@@ -1,49 +1,35 @@
-
 // Author: Amanda Adkins
 //Website: https://aaadkins-cs4241-assignment3.herokuapp.com/
 var express = require('express');
 var path = require('path');
+var fs = require('fs');
 
 var moviesList = [];
-/*moviesList.push(new Movie("Jaws", "Action", "1975"));
-moviesList.push(new Movie("The Little Mermaid", "Children's", "1989"));
-moviesList.push(new Movie("The Avengers", "Action", "2012"));
-moviesList.push(new Movie("Django Unchained", "Western", "2012")); */
 
 var app = express();
 var port = process.env.PORT || 3000;
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-
-var fs = require('fs');
+app.use(bodyParser.urlencoded({
+  extended: true
+})); // support encoded bodies
 
 readMoviesFile();
-/*var fileStream = fs.createWriteStream(path.join(__dirname, 'public/results.txt'));
-fileStream.write(JSON.stringify(moviesList)); */
 
 
 app.get('/index', function(req, res) {
   var query = req.query;
-  if (typeof query.search != 'undefined') {
-    if (query.search != "") {
-      queryMovie(res, query.search, query.fieldToSearch);
-    }
-  } else if (typeof query.addTitle != 'undefined') {
-    addMovie(query.addTitle, query.addGenre, query.addYear);
-    sendHTMLWithMovies(res, moviesList);
+  if (query.search != "") {
+    queryMovie(res, query.search, query.fieldToSearch);
   } else {
     sendHTMLWithMovies(res, moviesList);
   }
 });
 
 app.post('/index', function(req, res) {
-  console.log(req.body.addTitle);
-  console.log()
   if (req.body.addTitle === undefined) {
     deleteMovies(req)
-  }
-  else {
+  } else {
     addMovie(req.body.addTitle, req.body.addGenre, req.body.addYear);
   }
   updateMoviesFile();
@@ -95,7 +81,7 @@ app.listen(port, function() {
 });
 
 function deleteMovies(req) {
-  for (var j = moviesList.length -1; j >= 0; j--) {
+  for (var j = moviesList.length - 1; j >= 0; j--) {
     currentMovie = moviesList[j]
     removeTag = removeSpacesFromString(currentMovie.movieTitle + currentMovie.year);
     var selectVar = eval("req.body.select" + removeTag);
@@ -130,8 +116,8 @@ function generateHTMLTableRowsBasedOnMovies(moviesToSerialize) {
   tableString += '<table id="resultsTable">';
   tableString += "<thead><tr><th>Movie Title</th><th>Genre</th><th>Year</th><th>Select</th></tr></thead>";
   tableString += "<tbody>"
-  for (var j = 0; j < moviesList.length; j++) {
-    movie = moviesList[j];
+  for (var j = 0; j < moviesToSerialize.length; j++) {
+    movie = moviesToSerialize[j];
     tableString += generateMovieRowForTable(movie, j);
   }
   tableString += '</tbody></table>'
@@ -151,7 +137,7 @@ function generateMovieRowForTable(movie, movieIndex) {
   return tableString
 }
 
-function sendHTMLWithMovies(res, moviesList) {
+function sendHTMLWithMovies(res, moviesToSend) {
   var fileStream = fs.createReadStream(path.join(__dirname, 'public/index.html'));
   var htmlString;
 
@@ -160,7 +146,7 @@ function sendHTMLWithMovies(res, moviesList) {
   });
 
   fileStream.on('end', function() {
-    moviesString = generateHTMLTableRowsBasedOnMovies(moviesList);
+    moviesString = generateHTMLTableRowsBasedOnMovies(moviesToSend);
     resultHTML = modifyTableContentsInFile(htmlString, moviesString);
     res.send(resultHTML);
   });
