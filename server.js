@@ -16,6 +16,10 @@ app.use(bodyParser.urlencoded({
 
 readMoviesFile();
 
+displayedMovies = moviesList;
+
+var sortAscending = true;
+var lastSortedBy = "Title"
 
 app.get('/index', function(req, res) {
   var query = req.query;
@@ -23,6 +27,54 @@ app.get('/index', function(req, res) {
     queryMovie(res, query.search, query.fieldToSearch);
   } else {
     sendHTMLWithMovies(res, moviesList);
+  }
+});
+
+app.get('/sortByTitle', function(req, res) {
+  if (displayedMovies.length != 0) {
+    if (lastSortedBy = "Title") {
+      sortAscending = !sortAscending;
+    } else {
+      sortAscending = true;
+    }
+    lastSortedBy = "Title";
+    displayedMovies.sort(sortByTitle);
+    sendHTMLWithMovies(res, displayedMovies);
+  } else {
+    sendString = '<p>No movies to display. </p>';
+    returnNoMovies(res, sendString);
+  }
+});
+
+app.get('/sortByGenre', function(req, res) {
+  if (displayedMovies.length != 0) {
+    if (lastSortedBy = "Genre") {
+      sortAscending = !sortAscending;
+    } else {
+      sortAscending = true;
+    }
+    lastSortedBy = "Genre";
+    displayedMovies.sort(sortByGenre);
+    sendHTMLWithMovies(res, displayedMovies);
+  } else {
+    sendString = '<p>No movies to display. </p>';
+    returnNoMovies(res, sendString);
+  }
+});
+
+app.get('/sortByYear', function(req, res) {
+  if (displayedMovies.length != 0) {
+    if (lastSortedBy = "Year") {
+      sortAscending = !sortAscending;
+    } else {
+      sortAscending = true;
+    }
+    lastSortedBy = "Year";
+    displayedMovies.sort(sortByYear);
+    sendHTMLWithMovies(res, displayedMovies);
+  } else {
+    sendString = '<p>No movies to display.</p>';
+    returnNoMovies(res, sendString);
   }
 });
 
@@ -114,7 +166,7 @@ function generateHTMLTableRowsBasedOnMovies(moviesToSerialize) {
   var i;
   var tableString = '<form method="post" action="index">'
   tableString += '<table id="resultsTable">';
-  tableString += "<thead><tr><th>Movie Title</th><th>Genre</th><th>Year</th><th>Select</th></tr></thead>";
+  tableString += '<thead><tr><th><a href="sortByTitle">Movie Title</a></th><th><a href="sortByGenre">Genre</a></th><th><a href="sortByYear">Year</a></th><th>Select</th></tr></thead>';
   tableString += "<tbody>"
   for (var j = 0; j < moviesToSerialize.length; j++) {
     movie = moviesToSerialize[j];
@@ -138,6 +190,7 @@ function generateMovieRowForTable(movie, movieIndex) {
 }
 
 function sendHTMLWithMovies(res, moviesToSend) {
+  displayedMovies = moviesToSend;
   var fileStream = fs.createReadStream(path.join(__dirname, 'public/index.html'));
   var htmlString;
 
@@ -159,6 +212,7 @@ function Movie(movieTitle, genre, year) {
 }
 
 function returnNoMovies(res, replacementText) {
+  displayedMovies = [];
   var fileStream = fs.createReadStream(path.join(__dirname, 'public/index.html'));
   var htmlString;
 
@@ -184,4 +238,31 @@ function readMoviesFile() {
 
 function removeSpacesFromString(editString) {
   return editString.replace(/\s+/g, '');
+}
+
+function sortByTitle(movie1, movie2) {
+  return sortStrings(movie1.movieTitle, movie2.movieTitle);
+}
+
+function sortByGenre(movie1, movie2) {
+  return sortStrings(movie1.genre, movie2.genre);
+}
+
+function sortByYear(movie1, movie2) {
+  return -1*sortStrings(movie1.year, movie2.year);
+}
+
+function sortStrings(string1, string2) {
+  var result;
+  if (string1 < string2) {
+    result = -1;
+  } else if (string1 > string2) {
+    result = 1;
+  } else {
+    result = 0;
+  }
+  if (sortAscending) {
+    result = result * -1;
+  }
+  return result;
 }

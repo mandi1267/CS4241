@@ -27,10 +27,12 @@
     </form>
     <br>
     <form method="post" action="index">
-      <label for="add movie">Add a New Movie:<br></label>
+      <label for="add movie">Add a New Movie:
+        <br>
+      </label>
       <input class="textIn" id="addMovieTitle" placeholder="Movie Title" name="addTitle" type=text size="30" required />
-      <input class="textIn" id ="addMovieGenre" placeholder="Genre" name="addGenre" type=text size="30" required>
-      <input class="textIn" id ="addMovieYear" placeholder="Year" name="addYear" type=number size="30" required/>
+      <input class="textIn" id="addMovieGenre" placeholder="Genre" name="addGenre" type=text size="30" required>
+      <input class="textIn" id="addMovieYear" placeholder="Year" name="addYear" type=number size="30" required/>
       <input type="submit" />
       <input type="reset" />
     </form>
@@ -42,8 +44,9 @@
   </div>
   <div class="separatedUnit" id="technicalAcheivementDescription">
     <h2>Technical Achievement</h2>
-    <p>For the technical achievement portion, I added functionality for searching through different fields that are part of a movie. <br>
-      I also added the functionality to add a movie to the list (though this does not persist if the server crashes). </p>
+    <p>For the technical achievement portion, I kept up the different fields for the movies that I implemented for the last assignment.
+      I also made the table sortable. If you click on the heading for any of the columns, it'll sort the table in ascending order by that column.
+      If you click the same column again, it will sort the table in descending order. The headings turn red when you hover over them. </p>
   </div>
 
 

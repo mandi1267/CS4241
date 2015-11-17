@@ -26,7 +26,13 @@ table {
   padding: 1em;
   background-color: #F2EFDC;
 }
-label, td, th, p, header, h2, form {
+a {
+  text-decoration: none;
+}
+a:hover {
+  color: #F24C27;
+}
+label, td, th, p, header, h2, form, a {
   background-color: #F2EFDC;
 }
 input, select, option, button {
