@@ -32,7 +32,7 @@ app.get('/index', function(req, res) {
 
 app.get('/sortByTitle', function(req, res) {
   if (displayedMovies.length != 0) {
-    if (lastSortedBy = "Title") {
+    if (lastSortedBy === "Title") {
       sortAscending = !sortAscending;
     } else {
       sortAscending = true;
@@ -48,7 +48,7 @@ app.get('/sortByTitle', function(req, res) {
 
 app.get('/sortByGenre', function(req, res) {
   if (displayedMovies.length != 0) {
-    if (lastSortedBy = "Genre") {
+    if (lastSortedBy === "Genre") {
       sortAscending = !sortAscending;
     } else {
       sortAscending = true;
@@ -64,7 +64,7 @@ app.get('/sortByGenre', function(req, res) {
 
 app.get('/sortByYear', function(req, res) {
   if (displayedMovies.length != 0) {
-    if (lastSortedBy = "Year") {
+    if (lastSortedBy === "Year") {
       sortAscending = !sortAscending;
     } else {
       sortAscending = true;
