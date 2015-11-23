@@ -1,69 +1,68 @@
 /* Amanda Adkins */
 
 * {
-  background-color: #404040;
-  color: #024959;
   font-family: Lucida Sans Unicode;
 }
-
-#technicalAcheivementDescription {
-  margin-left: 1em;
-  float: right;
-  min-width: 20%;
-  max-width: 45%;
-
+p, label, td, th {
+  font-size: 0.9em;
 }
-#results {
-  float: left;
-  max-width: 60%;
-  min-width: 40%
+select {
+  margin-bottom: 0.5em;
 }
-
 body {
-  margin: 1em
+  background-color: #F2EFDF;
 }
 table {
+  border-color: #211426;
   padding: 1em;
-  background-color: #F2EFDC;
 }
 a {
   text-decoration: none;
+  color: #211426;
 }
 a:hover {
-  color: #F24C27;
-}
-label, td, th, p, header, h2, form, a {
-  background-color: #F2EFDC;
-}
-input, select, option, button {
-  background-color: #FFFFFF;
-  color: #024959
-}
-td {
-  width: 8em;
+  color: #413659;
 }
 td, th {
-  outline: solid #024959 .1em;
-  border-width: .1em;
+  outline-width: thin;
+  outline-color: #211426;
+  outline-style: solid;
   padding: .5em;
+  color: #211426;
+  width: 8em;
 }
-.textObject {
-  background-color: #F2EFDC;
-  color: #024959
+#top {
+  width: 100%;
+  background-color: #413659;
+  color: #9BBFAB;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding-left: 1em;
+  position: fixed;
+  height: 5.5em;
 }
-.separatedUnit {
-  border: solid;
-  border-width: 0.5em;
-  border-color: #F24C27;
-  padding: 0.5em;
-  border-radius: 0.5em;
-  background-color: #F2EFDC;
-  margin-top: 1em;
+#searchAddColumn {
+  width: 20%;
+  float: left;
+  border-right: solid thin #413659;
+}
+#movieTableColumn {
+  width: 75%;
+  float: right;
+  padding-left: 1.5em;
+}
+#pageBody {
+  margin-top: 5.5em;
+  padding: 1.5em;
+  background-color: #F2EFDF;
+  color: #211426;
 }
 .textIn {
   width: 15em;
+  margin: 0.2em;
 }
 #deleteButton {
-  float:right;
-  margin-right: 1em
+  margin-right: 1em;
+  float: right;
 }
