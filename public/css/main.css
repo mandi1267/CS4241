@@ -6,6 +6,9 @@
 p, label, td, th {
   font-size: 0.9em;
 }
+th {
+  font-weight: bold;
+}
 select {
   margin-bottom: 0.5em;
 }
@@ -16,12 +19,8 @@ table {
   border-color: #211426;
   padding: 1em;
 }
-a {
-  text-decoration: none;
-  color: #211426;
-}
-a:hover {
-  color: #413659;
+.clickToSort:hover {
+  color: #9BBFAB;
 }
 td, th {
   outline-width: thin;
@@ -43,18 +42,28 @@ td, th {
   height: 5.5em;
 }
 #searchAddColumn {
-  width: 20%;
+  width: auto;
+  padding-right: 1em;
+  margin-right: 0;
   float: left;
   border-right: solid thin #413659;
 }
 #movieTableColumn {
-  width: 75%;
+  padding-left: 0;
+  margin-left: 0;
+  float: left;
+  width: inherit;
+}
+#tableWrapper {
   float: right;
-  padding-left: 1.5em;
+}
+#fillPadding {
+  float: right;
+  width: 70%;
 }
 #pageBody {
   margin-top: 5.5em;
-  padding: 1.5em;
+  padding-left: 1.5em;
   background-color: #F2EFDF;
   color: #211426;
 }
@@ -65,4 +74,7 @@ td, th {
 #deleteButton {
   margin-right: 1em;
   float: right;
+}
+.deleteCheckbox {
+  text-align: center;
 }

@@ -21,189 +21,53 @@ displayedMovies = moviesList;
 var sortAscending = true;
 var lastSortedBy = "Title"
 
-app.get('/index', function(req, res) {
-  var query = req.query;
-  if (query.search != "") {
-    queryMovie(res, query.search, query.fieldToSearch);
-  } else {
-    sendHTMLWithMovies(res, moviesList);
-  }
+app.get('/movies', function(req, res) {
+  res.sendFile(path.join(__dirname, 'public/results.txt'));
 });
 
-app.get('/sortByTitle', function(req, res) {
-  if (displayedMovies.length != 0) {
-    if (lastSortedBy === "Title") {
-      sortAscending = !sortAscending;
-    } else {
-      sortAscending = true;
-    }
-    lastSortedBy = "Title";
-    displayedMovies.sort(sortByTitle);
-    sendHTMLWithMovies(res, displayedMovies);
-  } else {
-    sendString = '<p>No movies to display. </p>';
-    returnNoMovies(res, sendString);
-  }
+app.get('/search', function(req, res) {
+  
 });
 
-app.get('/sortByGenre', function(req, res) {
-  if (displayedMovies.length != 0) {
-    if (lastSortedBy === "Genre") {
-      sortAscending = !sortAscending;
-    } else {
-      sortAscending = true;
-    }
-    lastSortedBy = "Genre";
-    displayedMovies.sort(sortByGenre);
-    sendHTMLWithMovies(res, displayedMovies);
-  } else {
-    sendString = '<p>No movies to display. </p>';
-    returnNoMovies(res, sendString);
-  }
-});
-
-app.get('/sortByYear', function(req, res) {
-  if (displayedMovies.length != 0) {
-    if (lastSortedBy === "Year") {
-      sortAscending = !sortAscending;
-    } else {
-      sortAscending = true;
-    }
-    lastSortedBy = "Year";
-    displayedMovies.sort(sortByYear);
-    sendHTMLWithMovies(res, displayedMovies);
-  } else {
-    sendString = '<p>No movies to display.</p>';
-    returnNoMovies(res, sendString);
-  }
-});
-
-app.post('/index', function(req, res) {
-  if (req.body.addTitle === undefined) {
-    deleteMovies(req)
-  } else {
-    addMovie(req.body.addTitle, req.body.addGenre, req.body.addYear);
-  }
+app.post('/addMovie', function(req, res) {
+  movieString = req.body.addMovie;
+  newMovie = JSON.parse(movieString);
+  res.end();
+  readMoviesFile();
+  moviesList.push(newMovie);
   updateMoviesFile();
-  sendHTMLWithMovies(res, moviesList);
+});
+
+app.post('/deleteMovies', function(req, res) {
+  deleteString = req.body.deleteMovies;
+  moviesToDelete = JSON.parse(deleteString);
+  readMoviesFile();
+  for (i = 0; i < moviesToDelete.length; i++) {
+    movieIndex = -1;
+    for (j = 0; j < moviesList.length; j++) {
+      if (moviesEqual(moviesToDelete[i], moviesList[j])) {
+        movieIndex = j;
+        break;
+      }
+    }
+    if (movieIndex >= 0) {
+      console.log("removing " + moviesList[j]);
+      moviesList.splice(j, 1);
+    }
+  }
+  res.send(JSON.stringify(moviesList));
+  updateMoviesFile();
 });
 
 app.get('/', function(req, res) {
-
-  sendHTMLWithMovies(res, moviesList);
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.use(express.static(path.join(__dirname, '/public')));
 
-function queryMovie(res, searchQuery, searchField) {
-  if (searchField === "title") {
-    matchingMovies = moviesList.filter(checkNameInTitle(searchQuery));
-  } else if (searchField === "genre") {
-    matchingMovies = moviesList.filter(checkGenre(searchQuery));
-  } else if (searchField === "year") {
-    matchingMovies = moviesList.filter(checkMatchingYear(searchQuery));
-  }
-  if (matchingMovies.length != 0) {
-    sendHTMLWithMovies(res, matchingMovies);
-  } else {
-    sendString = '<p>No movies matching "' + searchQuery + '" in ' + searchField + '</p>';
-    returnNoMovies(res, sendString);
-  }
-}
-
-function addMovie(movieTitle, movieGenre, movieYear) {
-  newMovie = new Movie(movieTitle, movieGenre, movieYear);
-  if (!movieInList(newMovie)) {
-    moviesList.push(newMovie);
-  }
-}
-
-function movieInList(newMovie) {
-  for (var i = 0; i < moviesList.length; i++) {
-    movie = moviesList[i];
-    if ((movie.movieTitle === newMovie.movieTitle) && (movie.genre === newMovie.genre) && (movie.year === newMovie.year)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 app.listen(port, function() {
   console.log('App is listening on port ' + port);
 });
-
-function deleteMovies(req) {
-  for (var j = moviesList.length - 1; j >= 0; j--) {
-    currentMovie = moviesList[j]
-    removeTag = removeSpacesFromString(currentMovie.movieTitle + currentMovie.year);
-    var selectVar = eval("req.body.select" + removeTag);
-    if (selectVar === "on") {
-      console.log("delete " + moviesList[j].movieTitle);
-      moviesList.splice(j, 1);
-    }
-  }
-}
-
-function checkNameInTitle(name) {
-  return function(obj) {
-    return obj.movieTitle.indexOf(name) >= 0;
-  }
-}
-
-function checkGenre(selectedGenre) {
-  return function(obj) {
-    return obj.genre === selectedGenre;
-  }
-}
-
-function checkMatchingYear(selectedYear) {
-  return function(obj) {
-    return obj.year === selectedYear;
-  }
-}
-
-function generateHTMLTableRowsBasedOnMovies(moviesToSerialize) {
-  var i;
-  var tableString = '<form method="post" action="index">'
-  tableString += '<table id="resultsTable">';
-  tableString += '<thead><tr><th><a href="sortByTitle">Movie Title</a></th><th><a href="sortByGenre">Genre</a></th><th><a href="sortByYear">Year</a></th><th>Select</th></tr></thead>';
-  tableString += "<tbody>"
-  for (var j = 0; j < moviesToSerialize.length; j++) {
-    movie = moviesToSerialize[j];
-    tableString += generateMovieRowForTable(movie, j);
-  }
-  tableString += '</tbody></table>'
-  tableString += '<input id="deleteButton" type="submit" name="delete" value="Delete Selected Movies"/>'
-  tableString += '</form>'
-  return tableString;
-}
-
-function modifyTableContentsInFile(originalString, replacementText) {
-  return originalString.replace('<h2>Movies</h2>', '<h2>Movies</h2>' + replacementText);
-}
-
-function generateMovieRowForTable(movie, movieIndex) {
-  tableString = "<tr><td>" + movie.movieTitle + "</td><td>" + movie.genre + "</td><td>" + movie.year + "</td>"
-  tableString += '<td><input type="checkbox" name="select' + removeSpacesFromString(movie.movieTitle + movie.year) + '"/></td>'
-  tableString += '</tr>'
-  return tableString
-}
-
-function sendHTMLWithMovies(res, moviesToSend) {
-  displayedMovies = moviesToSend;
-  var fileStream = fs.createReadStream(path.join(__dirname, 'public/index.html'));
-  var htmlString;
-
-  fileStream.on('data', function(data) {
-    htmlString = data.toString();
-  });
-
-  fileStream.on('end', function() {
-    moviesString = generateHTMLTableRowsBasedOnMovies(moviesToSend);
-    resultHTML = modifyTableContentsInFile(htmlString, moviesString);
-    res.send(resultHTML);
-  });
-}
 
 function Movie(movieTitle, genre, year) {
   this.movieTitle = movieTitle;
@@ -249,7 +113,7 @@ function sortByGenre(movie1, movie2) {
 }
 
 function sortByYear(movie1, movie2) {
-  return -1*sortStrings(movie1.year, movie2.year);
+  return -1 * sortStrings(movie1.year, movie2.year);
 }
 
 function sortStrings(string1, string2) {
@@ -265,4 +129,8 @@ function sortStrings(string1, string2) {
     result = result * -1;
   }
   return result;
+}
+
+function moviesEqual(movie1, movie2) {
+  return movie1.movieTitle === movie2.movieTitle && movie1.genre === movie2.genre && movie1.year === movie2.year;
 }
