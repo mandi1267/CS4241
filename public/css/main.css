@@ -42,24 +42,20 @@ td, th {
   height: 5.5em;
 }
 #searchAddColumn {
-  width: auto;
+  width: 15em;
   padding-right: 1em;
   margin-right: 0;
+  margin-top: 0;
   float: left;
-  border-right: solid thin #413659;
 }
 #movieTableColumn {
   padding-left: 0;
-  margin-left: 0;
-  float: left;
-  width: inherit;
-}
-#tableWrapper {
-  float: right;
-}
-#fillPadding {
-  float: right;
-  width: 70%;
+  padding-top: 1em;
+  margin-left: 15em;
+  margin-top: 0em;
+  width: auto;
+
+  border-left: solid thin #413659;
 }
 #pageBody {
   margin-top: 5.5em;
@@ -73,8 +69,15 @@ td, th {
 }
 #deleteButton {
   margin-right: 1em;
-  float: right;
+  margin-left: 2em;
+  float: left;
 }
 .deleteCheckbox {
   text-align: center;
+}
+.tableTextBox {
+  width: 7.5em;
+}
+#movieTableTitle {
+  margin-top: 0em;
 }

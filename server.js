@@ -25,9 +25,6 @@ app.get('/movies', function(req, res) {
   res.sendFile(path.join(__dirname, 'public/results.txt'));
 });
 
-app.get('/search', function(req, res) {
-  
-});
 
 app.post('/addMovie', function(req, res) {
   movieString = req.body.addMovie;

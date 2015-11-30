@@ -10,7 +10,7 @@
   <script src="client.js"></script>
 </head>
 
-<body onload="showInitialTable()">
+<body onload="showInitialTable()" id="content">
   <div id="top">
     <h1>Movies List</h1>
   </div>
@@ -40,14 +40,9 @@
       <input type="reset" onclick="clearAdd()" />
     </div>
 
-    <div id="tableWrapper">
-      <div id="movieTableColumn">
-        <h3>Movies</h3>
-        <div id="moviesTable">
-        </div>
-      </div>
-
-      <div id="fillPadding">
+    <div id="movieTableColumn">
+      <h3 id="movieTableTitle">Movies</h3>
+      <div id="moviesTable">
       </div>
     </div>
 

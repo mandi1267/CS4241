@@ -2,13 +2,20 @@
 moviesList = [];
 displayedMovies = [];
 lastSortedBy = "";
-
-moviesList.push(new Movie('Titanic', 'Romance', '1999'));
+lastSearchBy = "";
+lastSearchFor = "";
+sortAscending = true;
+editingCellID = "";
+editingData = "";
 
 function Movie(movieTitle, genre, year) {
   this.movieTitle = movieTitle;
   this.genre = genre;
   this.year = year;
+}
+
+function getURLParam(oTarget, sVar) {
+  return decodeURI(oTarget.search.replace(new RegExp("^(?:.*[&\\?]" + encodeURI(sVar).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
 }
 
 function getMovies(callbackFunction) {
@@ -25,11 +32,19 @@ function getMovies(callbackFunction) {
 }
 
 function showInitialTable() {
-  getMovies(showFullList);
+  if (window.location.search == "") {
+    getMovies(showMoviesInTable);
+  } else {
+    getMovies(finishURLSearch);
+  }
 }
 
-function showFullList(moviesList) {
-  showMoviesInTable(moviesList);
+function finishURLSearch(moviesList) {
+  searchFor = getURLParam(window.location, "searchFor");
+  searchBy = getURLParam(window.location, "searchBy");
+  document.getElementById("search").value = searchFor;
+  document.getElementById("searchBy").value = searchBy;
+  runSearch(searchBy, searchFor);
 }
 
 function searchMovie() {
@@ -39,14 +54,31 @@ function searchMovie() {
 function finishSearch() {
   searchField = document.getElementById("search").value;
   searchBy = document.getElementById("searchBy").value;
-  matchingMovies = searchMovies(searchField, searchBy);
+  runSearch(searchBy, searchField);
+}
+
+function runSearch(searchBy, searchFor) {
+  newURL = stripQueryStringAndHashFromPath(window.location.href);
+  updateURL(newURL + '?searchFor=' + searchFor + '&searchBy=' + searchBy);
+  lastSearchBy = searchBy;
+  lastSearchFor = searchFor;
+  matchingMovies = searchMovies(searchFor, searchBy);
   showMoviesInTable(matchingMovies);
 }
 
 function clearSearch() {
   document.getElementById("search").value = "";
   document.getElementById("searchBy").selectedIndex = "0";
-  showInitialTable();
+  lastSortedBy = "";
+  getMovies(showMoviesInTable);
+  clearSearchFromUI();
+}
+
+function clearSearchFromUI() {
+  lastSearchBy = "";
+  lastSearchFor = "";
+  newURL = stripQueryStringAndHashFromPath(window.location.href);
+  updateURL(newURL);
 }
 
 function clearAdd() {
@@ -59,24 +91,28 @@ function submitAdd() {
   newTitle = document.getElementById("addMovieTitle").value;
   newGenre = document.getElementById("addMovieGenre").value;
   newYear = document.getElementById("addMovieYear").value;
-  console.log("Submitted add");
+  lastSortedBy = "";
   addMovie(newTitle, newGenre, newYear);
-  // redisplay movies
   showMoviesInTable(moviesList);
-  // send new movies list to server
+  clearSearchFromUI();
+
+  document.getElementById("addMovieTitle").value = "";
+  document.getElementById("addMovieGenre").value = "";
+  document.getElementById("addMovieYear").value = "";
 }
 
 function addMovie(movieTitle, movieGenre, movieYear) {
   newMovie = new Movie(movieTitle, movieGenre, movieYear);
   if (!movieInList(newMovie)) {
     moviesList.push(newMovie);
+    console.log("Adding movie");
+    console.log(newMovie);
+    sendAddToServer(newMovie);
   }
-  console.log("Adding movie");
-  console.log(newMovie);
-  sendAddToServer(newMovie);
 }
 
 function searchMovies(searchQuery, searchField) {
+  matchingMovies = [];
   if (searchField === "title") {
     matchingMovies = moviesList.filter(checkNameInTitle(searchQuery));
   } else if (searchField === "genre") {
@@ -115,6 +151,13 @@ function showMoviesInTable(moviesToShow) {
 }
 
 function showTableWithMovies(moviesToShow) {
+  if (lastSortedBy === "Title") {
+    moviesToShow.sort(compareByTitle);
+  } else if (lastSortedBy === "Year") {
+    moviesToShow.sort(compareByYear);
+  } else if (lastSortedBy === "Genre") {
+    moviesToShow.sort(compareByYear);
+  }
   displayedMovies = moviesToShow;
   tableInfo = document.getElementById("moviesTable"); //.innerHTML;
   tableInfo.innerHTML = "";
@@ -165,6 +208,14 @@ function addRowForMovie(tableBody, movieToShow, rowIndex) {
   tableRow.cells[1].innerHTML = movieToShow.genre;
   tableRow.cells[2].innerHTML = movieToShow.year;
   tableRow.cells[3].setAttribute('class', 'deleteCheckbox');
+  tableRow.cells[0].setAttribute('id', 'title__' + removeSpacesFromString(movieToShow.movieTitle + '__' + movieToShow.genre + '__' + movieToShow.year));
+  tableRow.cells[1].setAttribute('id', 'genre__' + removeSpacesFromString(movieToShow.movieTitle + '__' + movieToShow.genre + '__' + movieToShow.year));
+  tableRow.cells[2].setAttribute('id', 'year__' + removeSpacesFromString(movieToShow.movieTitle + '__' + movieToShow.genre + '__' + movieToShow.year));
+  for (i = 0; i < 3; i++) {
+    tableRow.cells[i].addEventListener('click', function() {
+      editTableCell(this.id);
+    });
+  }
   checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
   checkbox.setAttribute('id', 'select' + removeSpacesFromString(movieToShow.movieTitle + movieToShow.year));
@@ -186,16 +237,16 @@ function removeSpacesFromString(editString) {
 }
 
 function deleteMovies() {
-  console.log("Delete stuff");
   moviesToDelete = []
   for (var j = moviesList.length - 1; j >= 0; j--) {
     currentMovie = moviesList[j];
     removeTag = removeSpacesFromString(currentMovie.movieTitle + currentMovie.year);
     var selectVar = document.getElementById("select" + removeTag);
-    console.log(selectVar.checked);
-    if (selectVar.checked) {
-      moviesToDelete.push(moviesList[j]);
-      console.log("delete " + moviesList[j].movieTitle);
+    if (selectVar !== null) {
+      if (selectVar.checked) {
+        moviesToDelete.push(moviesList[j]);
+        console.log("delete " + moviesList[j].movieTitle);
+      }
     }
   }
 
@@ -219,7 +270,8 @@ function sendDeleteToServer(moviesToDelete, callbackFunction) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-      callbackFunction(xmlHttp.responseText);
+      moviesList = JSON.parse(xmlHttp.responseText);
+      callbackFunction();
     }
   };
   xmlHttp.open("POST", "deleteMovies", true);
@@ -227,10 +279,12 @@ function sendDeleteToServer(moviesToDelete, callbackFunction) {
   xmlHttp.send("deleteMovies=" + deleteMoviesString);
 }
 
-function finishDeletion(newMoviesList) {
-  moviesList = JSON.parse(newMoviesList);
-  console.log(moviesList);
-  showMoviesInTable(moviesList);
+function finishDeletion() {
+  if (lastSearchBy !== "") {
+    runSearch(lastSearchBy, lastSearchFor);
+  } else {
+    showMoviesInTable(moviesList);
+  }
 }
 
 function sortByTitle() {
@@ -297,4 +351,78 @@ function sortStrings(string1, string2) {
     result = result * -1;
   }
   return result;
+}
+
+function stripQueryStringAndHashFromPath(url) {
+  return url.split("?")[0];
+}
+
+function updateURL(newURL) {
+  html = document.getElementById("content").innerHTML;
+  docTitle = document.title;
+  window.history.pushState({
+    "html": html,
+    "pageTitle": docTitle
+  }, "", newURL);
+}
+
+function editTableCell(cellID) {
+  if (editingCellID !== cellID) {
+    if (editingCellID !== "") {
+      oldCell = document.getElementById(editingCellID);
+      oldCell.innerHTML = editingData;
+    }
+    cellToModify = document.getElementById(cellID);
+    cellParent = cellToModify.parentElement;
+    oldMovie = new Movie(cellParent.cells[0].innerHTML, cellParent.cells[1].innerHTML, cellParent.cells[2].innerHTML);
+    console.log(oldMovie);
+    data = cellToModify.innerHTML;
+    editingCellID = cellID;
+    editingData = data;
+    cellToModify.innerHTML = "";
+    textBox = document.createElement('input');
+    textBox.setAttribute('type', 'textIn');
+    textBox.value = data;
+    textBox.onmouseout = function() {
+      cellToModify.innerHTML = data;
+      editingCellID = "";
+      editingData = "";
+    };
+    textBox.onkeydown = function() {
+      if (event.keyCode == 13) {
+        console.log("enter pressed");
+        console.log(cellID);
+        pieces = cellID.split('__');
+        newTitle = cellParent.cells[0].innerHTML;
+        newGenre = cellParent.cells[1].innerHTML;
+        newYear = cellParent.cells[2].innerHTML;
+        if (pieces[0] === 'title') {
+          newTitle = this.value;
+        } else if (pieces[0] === 'genre') {
+          newGenre = this.value;
+        } else if (pieces[0] === 'year') {
+          newYear = this.value;
+        }
+
+        //  newMovie = new Movie(newTitle, newGenre, newYear);
+        //  deleteList =[];
+        //deleteList.push(old)
+        sendDeleteToServer([oldMovie], function() {
+          addMovie(newTitle, newGenre, newYear);
+          if (lastSearchBy !== "") {
+            runSearch(lastSearchBy, lastSearchFor)
+          } else {
+            showMoviesInTable(moviesList);
+          }
+
+          editingCellID = "";
+          editingData = "";
+        });
+
+      }
+    }
+    textBox.className = "tableTextBox";
+    cellToModify.appendChild(textBox);
+  }
+
 }
