@@ -266,7 +266,6 @@ function sendAddToServer(movieToAdd) {
 
 function sendDeleteToServer(moviesToDelete, callbackFunction) {
   deleteMoviesString = JSON.stringify(moviesToDelete);
-  console.log(deleteMoviesString);
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.onreadystatechange = function() {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
@@ -390,8 +389,6 @@ function editTableCell(cellID) {
     };
     textBox.onkeydown = function() {
       if (event.keyCode == 13) {
-        console.log("enter pressed");
-        console.log(cellID);
         pieces = cellID.split('__');
         newTitle = cellParent.cells[0].innerHTML;
         newGenre = cellParent.cells[1].innerHTML;
