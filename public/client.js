@@ -91,14 +91,18 @@ function submitAdd() {
   newTitle = document.getElementById("addMovieTitle").value;
   newGenre = document.getElementById("addMovieGenre").value;
   newYear = document.getElementById("addMovieYear").value;
-  lastSortedBy = "";
-  addMovie(newTitle, newGenre, newYear);
-  showMoviesInTable(moviesList);
-  clearSearchFromUI();
+  if ((newTitle !== "") && (newGenre !== "") && (newYear !== "")) {
+    lastSortedBy = "";
+    addMovie(newTitle, newGenre, newYear);
+    showMoviesInTable(moviesList);
+    clearSearchFromUI();
 
-  document.getElementById("addMovieTitle").value = "";
-  document.getElementById("addMovieGenre").value = "";
-  document.getElementById("addMovieYear").value = "";
+    document.getElementById("addMovieTitle").value = "";
+    document.getElementById("addMovieGenre").value = "";
+    document.getElementById("addMovieYear").value = "";
+  } else {
+    alert("Please fill in all fields before adding");
+  }
 }
 
 function addMovie(movieTitle, movieGenre, movieYear) {
