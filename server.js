@@ -16,11 +16,6 @@ app.use(bodyParser.urlencoded({
 
 readMoviesFile();
 
-displayedMovies = moviesList;
-
-var sortAscending = true;
-var lastSortedBy = "Title"
-
 app.get('/movies', function(req, res) {
   res.sendFile(path.join(__dirname, 'public/results.txt'));
 });
@@ -72,21 +67,6 @@ function Movie(movieTitle, genre, year) {
   this.year = year;
 }
 
-function returnNoMovies(res, replacementText) {
-  displayedMovies = [];
-  var fileStream = fs.createReadStream(path.join(__dirname, 'public/index.html'));
-  var htmlString;
-
-  fileStream.on('data', function(data) {
-    htmlString = data.toString();
-  });
-
-  fileStream.on('end', function() {
-    resultHTML = modifyTableContentsInFile(htmlString, replacementText);
-    res.send(resultHTML);
-  });
-}
-
 function updateMoviesFile() {
   var fileStream = fs.createWriteStream(path.join(__dirname, 'public/results.txt'));
   fileStream.write(JSON.stringify(moviesList));
@@ -99,33 +79,6 @@ function readMoviesFile() {
 
 function removeSpacesFromString(editString) {
   return editString.replace(/\s+/g, '');
-}
-
-function sortByTitle(movie1, movie2) {
-  return sortStrings(movie1.movieTitle, movie2.movieTitle);
-}
-
-function sortByGenre(movie1, movie2) {
-  return sortStrings(movie1.genre, movie2.genre);
-}
-
-function sortByYear(movie1, movie2) {
-  return -1 * sortStrings(movie1.year, movie2.year);
-}
-
-function sortStrings(string1, string2) {
-  var result;
-  if (string1 < string2) {
-    result = -1;
-  } else if (string1 > string2) {
-    result = 1;
-  } else {
-    result = 0;
-  }
-  if (sortAscending) {
-    result = result * -1;
-  }
-  return result;
 }
 
 function moviesEqual(movie1, movie2) {
