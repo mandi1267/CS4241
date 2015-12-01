@@ -1,4 +1,6 @@
-//var moviesRequest = new XMLHTTPRequest();
+// Amanda Adkins
+// Assignment 5
+// webiste: https://aaadkins-cs4241-assignment5.herokuapp.com/
 moviesList = [];
 displayedMovies = [];
 lastSortedBy = "";
