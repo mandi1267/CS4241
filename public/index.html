@@ -2,51 +2,20 @@
 <html lang="en">
 
 <head>
-  <title>CS4241 HW 5</title>
+  <title>Holiday Website</title>
   <meta charset="utf-8">
   <link rel="stylesheet" href="css/main.css">
   <!-- Author: Amanda Adkins -->
-  <!-- Website: https://aaadkins-cs4241-assignment5.herokuapp.com -->
   <script src="client.js"></script>
 </head>
 
-<body onload="showInitialTable()" id="content">
-  <div id="top">
-    <h1>Movies List</h1>
+<body id="content" onload="loadCanvas()">
+  <div id=top>
+    <h1>CHRISTMASSSSS</h1>
   </div>
-  <div id="pageBody">
-    <div id="searchAddColumn">
-      <h3>Search</h3>
-      <input class="textIn" id="search" name="search" type=text size="30" placeholder="Search" />
-      <br>
-      <label for="fieldToSearch">Search by: </label>
-      <select id="searchBy" name="fieldToSearch">
-        <option value="title">Title</option>
-        <option value="genre">Genre</option>
-        <option value="year">Year</option>
-      </select>
-      <br>
-      <input type="submit" onclick="searchMovie()" />
-      <input type="reset" onclick="clearSearch()" />
-      <br>
-      <h3>Add a new movie</h3>
-      <input class="textIn" id="addMovieTitle" placeholder="Movie Title" name="addTitle" type=text size="30" required />
-      <br>
-      <input class="textIn" id="addMovieGenre" placeholder="Genre" name="addGenre" type=text size="30" required>
-      <br>
-      <input class="textIn" id="addMovieYear" placeholder="Year" name="addYear" type=number size="30" required/>
-      <br>
-      <input type="submit" onclick="submitAdd()" />
-      <input type="reset" onclick="clearAdd()" />
-    </div>
-
-    <div id="movieTableColumn">
-      <h3 id="movieTableTitle">Movies</h3>
-      <div id="moviesTable">
-      </div>
-    </div>
-
-
+  <div id=pageBody >
+    <canvas id=snakeCanvas>
+    </canvas>
   </div>
 </body>
 

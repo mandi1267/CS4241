@@ -3,37 +3,10 @@
 * {
   font-family: Lucida Sans Unicode;
 }
-p, label, td, th {
-  font-size: 0.9em;
-}
-th {
-  font-weight: bold;
-}
-select {
-  margin-bottom: 0.5em;
-}
-body {
-  background-color: #F2EFDF;
-}
-table {
-  border-color: #211426;
-  padding: 1em;
-}
-.clickToSort:hover {
-  color: #9BBFAB;
-}
-td, th {
-  outline-width: thin;
-  outline-color: #211426;
-  outline-style: solid;
-  padding: .5em;
-  color: #211426;
-  width: 8em;
-}
 #top {
   width: 100%;
-  background-color: #413659;
-  color: #9BBFAB;
+  background-color: #4E0805;
+  color: #B8C591;
   top: 0;
   left: 0;
   right: 0;
@@ -41,43 +14,16 @@ td, th {
   position: fixed;
   height: 5.5em;
 }
-#searchAddColumn {
-  width: 15em;
-  padding-right: 1em;
-  margin-right: 0;
-  margin-top: 0;
-  float: left;
-}
-#movieTableColumn {
-  padding-left: 0;
-  padding-top: 1em;
-  margin-left: 15em;
-  margin-top: 0em;
-  width: auto;
-
-  border-left: solid thin #413659;
+canvas {
+  height: 30em;
+  width: 45em;
+  border-color: #000000;
+  border-style: solid;
+  margin: 0 auto;
 }
 #pageBody {
   margin-top: 5.5em;
   padding-left: 1.5em;
   background-color: #F2EFDF;
   color: #211426;
-}
-.textIn {
-  width: 15em;
-  margin: 0.2em;
-}
-#deleteButton {
-  margin-right: 1em;
-  margin-left: 2em;
-  float: left;
-}
-.deleteCheckbox {
-  text-align: center;
-}
-.tableTextBox {
-  width: 7.5em;
-}
-#movieTableTitle {
-  margin-top: 0em;
 }
