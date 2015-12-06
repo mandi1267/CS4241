@@ -5,8 +5,8 @@
 }
 #top {
   width: 100%;
-  background-color: #4E0805;
-  color: #B8C591;
+  background-color: #010440;
+  color: #383B73;
   top: 0;
   left: 0;
   right: 0;
@@ -14,6 +14,11 @@
   position: fixed;
   height: 5.5em;
   text-align: center;
+}
+body {
+  background-image: url('../images/winterbkg2.jpe');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 canvas {
   margin: 0 auto;
@@ -23,8 +28,6 @@ canvas {
 }
 #pageBody {
   margin-top: 5.5em;
-  background-color: #F2EFDF;
-  color: #211426;
   margin-left: auto;
   margin-right: auto;
   padding-top: 1em;
@@ -34,5 +37,5 @@ canvas {
   padding-right: 3em;
   margin-left: auto;
   margin-right: auto;
-  width:52.5em;
+  width: 52.5em;
 }

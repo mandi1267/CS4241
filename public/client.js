@@ -2,19 +2,49 @@ var canvas;
 var ctx;
 var randGen = Math.random;
 
-var snakeWidth = 45;
-var snakeHeight = 30;
+var snakeWidth = 35;
+var snakeHeight = 20;
+
+var canvasBkgColor = '#FFFFFF'
 
 var foodLoc = [];
 var snakeLoc = [];
 var dir;
 
-var togglePlay = true;
+var playing = true;
 var timerID;
+var secTimer;
 
-var gameDelay = 250;
+var startingGameDelay = 250;
+var gameDelayDec = .95;
+var gameDelay = startingGameDelay;
 
 var gameOver = false;
+
+//var christmasMode = false;
+
+var mode = 'none';
+
+
+var presentImg = new Image();
+presentImg.src = "images/presentImg.ico";
+
+var objSize = 30;
+
+var secCounter = 0;
+
+
+var reindeerImg = new Image();
+reindeerImg.src = "images/reindeer.jpe";
+
+var snowflakeImg = new Image();
+snowflakeImg.src = "images/snowflake2.png";
+
+var snowmanImg = new Image();
+snowmanImg.src = "images/snowman.png";
+
+var mouseInRange = true;
+var border;
 
 // N = 3
 // E = 2
@@ -22,47 +52,110 @@ var gameOver = false;
 // W = 0
 
 function loadCanvas() {
+  snakeLen = 1;
   canvas = document.getElementById("snakeCanvas");
+
+  gameBorder = document.getElementById("gameBorder");
 
   ctx = canvas.getContext("2d");
 
-  canvas.setAttribute('width', snakeWidth * 10);
-  canvas.setAttribute('height', snakeHeight * 10);
+  canvas.setAttribute('width', snakeWidth * objSize);
+  canvas.setAttribute('height', snakeHeight * objSize);
 
   top = document.getElementById("top");
+  pgBody = document.getElementById("pageBody");
 
-  document.addEventListener('keydown', keyDown, true);
+  pgBody.addEventListener('keydown', keyDown, false);
+
+  document.addEventListener('keydown', keyDown, false);
   document.addEventListener('keypress', keyPressed, true);
 
+  canvas.addEventListener('dblclick', canvasClicked, false);
+  pgBody.addEventListener('dblclick', borderDoubleClick, false);
+
+  displayStartMsg();
+}
+
+function canvasClicked(e) {
+  e.stopPropagation();
+  console.log("canvas clicked");
   restartGame();
+}
+
+
+function borderDoubleClick(e) {
+  if (mode === 'christmas') {
+    applyWinterTheme();
+  } else if (mode === 'winter') {
+    applyNormalTheme();
+  } else if (mode === 'none') {
+    applyHolidayTheme();
+  }
+  e.stopPropagation();
 }
 
 function restartGame() {
   gameOver = false;
   initializeSnake();
   setSnakeFood();
+  gameDelay = startingGameDelay;
 
   timerID = window.setInterval(draw, gameDelay);
+  secCounter = 0;
+  secTimer = window.setInterval(secElapsed, 1000);
+}
+
+function secElapsed() {
+  if (secCounter === 30) {
+    gameDelay = gameDelayDec * gameDelay;
+    window.clearInterval(timerID);
+    timerID = window.setInterval(draw, gameDelay);
+    secCounter = 0;
+  } else {
+    secCounter += 1;
+  }
 }
 
 function keyPressed(e) {
   if (e.keyCode === 32) {
     if (!gameOver) {
-      console.log("spacePressed");
-      togglePlay = !togglePlay;
-      togglePlayHandler();
+      togglePlayHandler(!playing);
     } else {
-      console.log("restart game");
       restartGame();
+    }
+  } else if ((e.keyCode === 99) || (e.keyCode === 67)) {
+    if (mode === 'christmas') {
+      applyNormalTheme();
+    } else {
+      applyHolidayTheme();
+    }
+  } else if ((e.keyCode === 102) || (e.keyCode === 70)) {
+    if (mode === 'winter') {
+      applyNormalTheme();
+    } else {
+      applyWinterTheme();
+    }
+  } else if ((e.keyCode === 105) || (e.keyCode === 73)) {
+    if (playing) {
+      togglePlayHandler(false);
+      displayStartMsg()
+    } else {
+      togglePlayHandler(true);
     }
   }
 }
 
-function togglePlayHandler() {
-  if (togglePlay) {
+function togglePlayHandler(shouldPlay) {
+  if ((shouldPlay) && (!playing)) {
+    console.log("adding back timers");
     timerID = window.setInterval(draw, gameDelay);
+    secTimer = window.setInterval(secElapsed, 1000);
+    playing = true;
   } else {
+    playing = false
+    console.log("clearing timers");
     window.clearInterval(timerID);
+    window.clearInterval(secTimer);
   }
 }
 
@@ -85,16 +178,33 @@ function draw() {
 }
 
 function drawSnakeField() {
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (i = 0; i < snakeLen; i++) {
-    cell = snakeLoc[i];
+  if (mode === 'none') {
+    ctx.fillStyle = canvasBkgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (i = 0; i < snakeLen; i++) {
+      cell = snakeLoc[i];
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(cell[0] * objSize, cell[1] * objSize, objSize, objSize);
+    }
     ctx.fillStyle = "#000000";
-    ctx.fillRect(cell[0] * 10, cell[1] * 10, 10, 10);
+    ctx.fillRect(foodLoc[0] * objSize, foodLoc[1] * objSize, objSize, objSize);
+  } else if (mode === 'christmas') {
+    ctx.fillStyle = canvasBkgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (i = 0; i < snakeLen; i++) {
+      cell = snakeLoc[i];
+      ctx.drawImage(reindeerImg, cell[0] * objSize, cell[1] * objSize, objSize, objSize);
+    }
+    ctx.drawImage(presentImg, foodLoc[0] * objSize, foodLoc[1] * objSize, objSize, objSize);
+  } else {
+    ctx.fillStyle = canvasBkgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (i = 0; i < snakeLen; i++) {
+      cell = snakeLoc[i];
+      ctx.drawImage(snowmanImg, cell[0] * objSize, cell[1] * objSize, objSize, objSize);
+    }
+    ctx.drawImage(snowflakeImg, foodLoc[0] * objSize, foodLoc[1] * objSize, objSize, objSize);
   }
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(foodLoc[0] * 10, foodLoc[1] * 10, 10, 10);
-
 }
 
 function setSnakeFood() {
@@ -122,19 +232,18 @@ function initializeSnake() {
 
 function keyDown(e) {
   if (dir % 2 === 0) { // E or W
-    if (e.keyCode === 38) {
+    if ((e.keyCode === 38) || (e.keyCode === 87) || (e.keyCode === 119)) {
       dir = 3;
-    } else if (e.keyCode === 40) {
+    } else if ((e.keyCode === 40) || (e.keyCode === 83) || (e.keyCode === 115)) {
       dir = 1;
     }
   } else {
-    if (e.keyCode === 37) {
+    if ((e.keyCode === 37) || (e.keyCode === 65) || (e.keyCode === 97)) {
       dir = 0;
-    } else if (e.keyCode === 39) {
+    } else if ((e.keyCode === 39) || (e.keyCode === 68) || (e.keyCode === 100)) {
       dir = 2;
     }
   }
-
 }
 
 function updateSnake() {
@@ -143,7 +252,6 @@ function updateSnake() {
 }
 
 function checkForCollision() {
-  console.log(computeNextSnakeLoc());
   nextLoc = computeNextSnakeLoc()
   if ((nextLoc[0] < 0) || (nextLoc[0] >= snakeWidth)) {
     return true;
@@ -182,12 +290,64 @@ function computeNextSnakeLoc() {
 }
 
 function displayGameOver() {
-
-  ctx.font = "16px Lucida";
+  ctx.font = "32px Lucida Sans Serif";
   ctx.fillStyle = "#0095DD";
   displayText = "Game Over";
   ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2);
-  togglePlay = false;
-  togglePlayHandler();
-  console.log("handling game over");
+  togglePlayHandler(false);
+}
+
+function displayStartMsg() {
+  ctx.font = "32px Arial";
+  ctx.fillStyle = "#0095DD";
+  displayText = "Double click to start";
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 - 80); // -ctx.measureText(displayText).height);
+  displayText = "Double click at any time to restart game";
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 - 40); // + ctx.measureText(displayText).height);
+  displayText = "Use arrow/WASD keys to play";
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2); // + ctx.measureText(displayText).height);
+  displayText = "Use space bar to pause";
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 + 40); // + ctx.measureText(displayText).height);
+  displayText = "Double click page background for a surprise";
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 + 80); // + ctx.measureText(displayText).height);
+
+}
+
+function applyWinterTheme() {
+  mode = 'winter';
+  canvasBkgColor = '#ACADC2';
+  changeCSS('css/winter.css', 0);
+
+  title = document.getElementById("siteTitle");
+  title.innerHTML = "Winter Snake"
+}
+
+function applyHolidayTheme() {
+  mode = 'christmas'
+  canvasBkgColor = '#FFFFFF'
+  changeCSS('css/holiday.css', 0);
+
+  title = document.getElementById("siteTitle");
+  title.innerHTML = "Christmas Snake";
+}
+
+
+function changeCSS(cssFile, cssLinkIndex) {
+
+  var oldlink = document.getElementsByTagName("link").item(cssLinkIndex);
+
+  var newlink = document.createElement("link");
+  newlink.setAttribute("rel", "stylesheet");
+  newlink.setAttribute("type", "text/css");
+  newlink.setAttribute("href", cssFile);
+
+  document.getElementsByTagName("head").item(0).replaceChild(newlink, oldlink);
+}
+
+function applyNormalTheme() {
+  mode = 'none'
+  canvasBkgColor = '#FFFFFF'
+  changeCSS('css/main.css', 0);
+  title = document.getElementById("siteTitle");
+  title.innerHTML = "Snake";
 }
