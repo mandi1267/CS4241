@@ -77,8 +77,8 @@ function loadCanvas() {
   document.addEventListener('keydown', keyDown, false);
   document.addEventListener('keypress', keyPressed, true);
 
-  canvas.addEventListener('click', canvasClicked, false);
-  pgBody.addEventListener('click', borderDoubleClick, false);
+  canvas.addEventListener('dblclick', canvasClicked, false);
+  pgBody.addEventListener('dblclick', borderDoubleClick, false);
   pgBody.addEventListener('touchstart', onTouch, false);
   pgBody.addEventListener('touchend', onEndTouch, false);
 
@@ -151,7 +151,7 @@ function restartGame() {
   initializeSnake();
   setSnakeFood();
   gameDelay = startingGameDelay;
-
+  playing = true;
   timerID = window.setInterval(draw, gameDelay);
   secCounter = 0;
   secTimer = window.setInterval(secElapsed, 1000);
@@ -190,7 +190,7 @@ function keyPressed(e) {
   } else if ((e.keyCode === 105) || (e.keyCode === 73)) {
     if (playing) {
       togglePlayHandler(false);
-      displayStartMsg()
+      displayStartMsg();
     } else {
       togglePlayHandler(true);
     }
@@ -372,6 +372,7 @@ function applyWinterTheme() {
 
   title = document.getElementById("siteTitle");
   title.innerHTML = "Winter Snake"
+  drawSnakeField();
 }
 
 function applyHolidayTheme() {
@@ -381,6 +382,7 @@ function applyHolidayTheme() {
 
   title = document.getElementById("siteTitle");
   title.innerHTML = "Christmas Snake";
+  drawSnakeField();
 }
 
 
@@ -402,4 +404,5 @@ function applyNormalTheme() {
   changeCSS('css/main.css', 0);
   title = document.getElementById("siteTitle");
   title.innerHTML = "Snake";
+  drawSnakeField();
 }
