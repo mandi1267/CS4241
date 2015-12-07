@@ -82,6 +82,7 @@ function loadCanvas() {
   pgBody.addEventListener('touchstart', onTouch, false);
   pgBody.addEventListener('touchend', onEndTouch, false);
 
+
   displayStartMsg();
 }
 

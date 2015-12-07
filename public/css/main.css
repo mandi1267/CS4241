@@ -28,10 +28,13 @@ canvas {
   margin-right: auto;
   padding-top: 1em;
 }
+body {
+  overflow: hidden;
+}
 #gameBorder {
   padding-left: 3em;
   padding-right: 3em;
   margin-left: auto;
   margin-right: auto;
-  width:52.5em;
+  width: 52.5em;
 }
