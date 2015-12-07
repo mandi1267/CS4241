@@ -46,6 +46,13 @@ snowmanImg.src = "images/snowman.png";
 var mouseInRange = true;
 var border;
 
+var touchStartX = 0;
+var touchStartY = 0;
+
+var minSwipeDist = 1000000;
+
+
+
 // N = 3
 // E = 2
 // S = 1
@@ -72,9 +79,53 @@ function loadCanvas() {
 
   canvas.addEventListener('dblclick', canvasClicked, false);
   pgBody.addEventListener('dblclick', borderDoubleClick, false);
+  pgBody.addEventListener('touchstart', onTouch, false);
+  pgBody.addEventListener('touchend', onEndTouch, false);
 
   displayStartMsg();
 }
+
+function onTouch(e) {
+  console.log("touch start");
+  var touchobj = e.changedTouches[0]
+  touchStartX = touchobj.pageX
+  touchStartY = touchobj.pageY
+}
+
+function onEndTouch(e) {
+  console.log("touch end");
+
+  var touchobj = e.changedTouches[0]
+  xDiff = touchStartX - touchobj.pageX;
+  yDiff = touchStartY - touchobj.pageY;
+  dist = Math.pow((Math.pow(xDiff, 2) + Math.pow(yDiff, 2)), 2);
+  console.log(dist + ' dist');
+  if (dist > minSwipeDist) {
+    console.log('swiped!');
+    if (dir % 2 === 0) { // E or W
+      if (Math.abs(xDiff) < Math.abs(yDiff)) {
+        if (yDiff > 0) {
+          console.log("North");
+          dir = 3;
+        } else {
+          console.log("South");
+          dir = 1;
+        }
+      }
+    } else {
+      if (Math.abs(yDiff) < Math.abs(xDiff)) {
+        if (xDiff > 0) {
+          console.log("West");
+          dir = 0;
+        } else if (xDiff < 0) {
+          console.log("East");
+          dir = 2;
+        }
+      }
+    }
+  }
+}
+
 
 function canvasClicked(e) {
   e.stopPropagation();
