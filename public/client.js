@@ -77,8 +77,8 @@ function loadCanvas() {
   document.addEventListener('keydown', keyDown, false);
   document.addEventListener('keypress', keyPressed, true);
 
-  canvas.addEventListener('dblclick', canvasClicked, false);
-  pgBody.addEventListener('dblclick', borderDoubleClick, false);
+  canvas.addEventListener('click', canvasClicked, false);
+  pgBody.addEventListener('click', borderDoubleClick, false);
   pgBody.addEventListener('touchstart', onTouch, false);
   pgBody.addEventListener('touchend', onEndTouch, false);
 
