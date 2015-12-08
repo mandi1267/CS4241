@@ -5,17 +5,18 @@
 }
 #top {
   width: 100%;
-  background-color: #1F0200;
-  color: #6B0800;
+  background-color: #2A0403;
+  color: #CD5F5E;
   top: 0;
   left: 0;
   right: 0;
   position: fixed;
   height: 5.5em;
   text-align: center;
+  box-shadow: 0 0 20px #000;
 }
 body {
-  background-image: url('../images/christmasbkg.jpe');
+  background-image: url('../images/christmas3.jpg');
   background-repeat: no-repeat;
   background-size: cover;
 }

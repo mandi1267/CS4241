@@ -1,65 +1,53 @@
 var canvas;
 var ctx;
-var randGen = Math.random;
 
 var snakeWidth = 35;
 var snakeHeight = 20;
 
-var canvasBkgColor = '#FFFFFF'
+var canvasBkgColor = '#FFFFFF';
+var fontColor = '#7B0AA4';
 
 var foodLoc = [];
 var snakeLoc = [];
 var dir;
 
-var playing = true;
+var playing;
 var timerID;
 var secTimer;
 
 var startingGameDelay = 250;
-var gameDelayDec = .95;
+var gameDelayDec = .90;
 var gameDelay = startingGameDelay;
 
-var gameOver = false;
+var objSize = 30;
+var secCounter = 0;
 
-//var christmasMode = false;
+var gameOver = true;
 
 var mode = 'none';
 
+var gameNotStarted = true;
 
 var presentImg = new Image();
 presentImg.src = "images/presentImg.ico";
-
-var objSize = 30;
-
-var secCounter = 0;
-
 
 var reindeerImg = new Image();
 reindeerImg.src = "images/reindeer.jpe";
 
 var snowflakeImg = new Image();
-snowflakeImg.src = "images/snowflake2.png";
+snowflakeImg.src = "images/snowIcon.png";
 
 var snowmanImg = new Image();
 snowmanImg.src = "images/snowman.png";
-
-var mouseInRange = true;
-var border;
 
 var touchStartX = 0;
 var touchStartY = 0;
 
 var minSwipeDist = 1000000;
 
-
-
-// N = 3
-// E = 2
-// S = 1
-// W = 0
-
 function loadCanvas() {
   snakeLen = 1;
+  playing = false;
   canvas = document.getElementById("snakeCanvas");
 
   gameBorder = document.getElementById("gameBorder");
@@ -82,44 +70,35 @@ function loadCanvas() {
   pgBody.addEventListener('touchstart', onTouch, false);
   pgBody.addEventListener('touchend', onEndTouch, false);
 
-
   displayStartMsg();
 }
 
 function onTouch(e) {
-  console.log("touch start");
   var touchobj = e.changedTouches[0]
   touchStartX = touchobj.pageX
   touchStartY = touchobj.pageY
 }
 
 function onEndTouch(e) {
-  console.log("touch end");
-
   var touchobj = e.changedTouches[0]
   xDiff = touchStartX - touchobj.pageX;
   yDiff = touchStartY - touchobj.pageY;
   dist = Math.pow((Math.pow(xDiff, 2) + Math.pow(yDiff, 2)), 2);
   console.log(dist + ' dist');
   if (dist > minSwipeDist) {
-    console.log('swiped!');
     if (dir % 2 === 0) { // E or W
       if (Math.abs(xDiff) < Math.abs(yDiff)) {
         if (yDiff > 0) {
-          console.log("North");
           dir = 3;
         } else {
-          console.log("South");
           dir = 1;
         }
       }
     } else {
       if (Math.abs(yDiff) < Math.abs(xDiff)) {
         if (xDiff > 0) {
-          console.log("West");
           dir = 0;
         } else if (xDiff < 0) {
-          console.log("East");
           dir = 2;
         }
       }
@@ -127,41 +106,40 @@ function onEndTouch(e) {
   }
 }
 
-
 function canvasClicked(e) {
-  e.stopPropagation();
-  console.log("canvas clicked");
   restartGame();
 }
 
 
 function borderDoubleClick(e) {
   if (mode === 'christmas') {
-    applyWinterTheme();
+    newMode = 'winter';
   } else if (mode === 'winter') {
-    applyNormalTheme();
+    newMode = 'none';
   } else if (mode === 'none') {
-    applyHolidayTheme();
+    newMode = 'christmas';
   }
-  e.stopPropagation();
+  applyNewTheme(newMode);
+  //e.stopPropagation(); - can uncomment if don't want to change themes every time game restarts
 }
 
 function restartGame() {
+  gameNotStarted = false;
   gameOver = false;
   initializeSnake();
   setSnakeFood();
   gameDelay = startingGameDelay;
-  playing = true;
-  timerID = window.setInterval(draw, gameDelay);
   secCounter = 0;
-  secTimer = window.setInterval(secElapsed, 1000);
+  togglePlayHandler(true);
 }
 
 function secElapsed() {
   if (secCounter === 30) {
     gameDelay = gameDelayDec * gameDelay;
-    window.clearInterval(timerID);
-    timerID = window.setInterval(draw, gameDelay);
+    if (playing) {
+      window.clearInterval(timerID);
+      timerID = window.setInterval(draw, gameDelay);
+    }
     secCounter = 0;
   } else {
     secCounter += 1;
@@ -177,15 +155,15 @@ function keyPressed(e) {
     }
   } else if ((e.keyCode === 99) || (e.keyCode === 67)) {
     if (mode === 'christmas') {
-      applyNormalTheme();
+      applyNewTheme('none');
     } else {
-      applyHolidayTheme();
+      applyNewTheme('christmas');
     }
   } else if ((e.keyCode === 102) || (e.keyCode === 70)) {
     if (mode === 'winter') {
-      applyNormalTheme();
+      applyNewTheme('none');
     } else {
-      applyWinterTheme();
+      applyNewTheme('winter');
     }
   } else if ((e.keyCode === 105) || (e.keyCode === 73)) {
     if (playing) {
@@ -199,20 +177,17 @@ function keyPressed(e) {
 
 function togglePlayHandler(shouldPlay) {
   if ((shouldPlay) && (!playing)) {
-    console.log("adding back timers");
     timerID = window.setInterval(draw, gameDelay);
     secTimer = window.setInterval(secElapsed, 1000);
     playing = true;
   } else {
-    playing = false
-    console.log("clearing timers");
+    playing = false;
     window.clearInterval(timerID);
     window.clearInterval(secTimer);
   }
 }
 
 function draw() {
-
   drawSnakeField();
   if (checkForCollision()) {
     gameOver = true;
@@ -235,10 +210,10 @@ function drawSnakeField() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     for (i = 0; i < snakeLen; i++) {
       cell = snakeLoc[i];
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = "#1B0B38";
       ctx.fillRect(cell[0] * objSize, cell[1] * objSize, objSize, objSize);
     }
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = "#7B0AA4";
     ctx.fillRect(foodLoc[0] * objSize, foodLoc[1] * objSize, objSize, objSize);
   } else if (mode === 'christmas') {
     ctx.fillStyle = canvasBkgColor;
@@ -263,8 +238,8 @@ function setSnakeFood() {
   foodLoc.push(0);
   foodLoc.push(0);
   do {
-    foodLoc[0] = randGen() * snakeWidth | 0;
-    foodLoc[1] = randGen() * snakeHeight | 0;
+    foodLoc[0] = Math.random() * snakeWidth | 0;
+    foodLoc[1] = Math.random() * snakeHeight | 0;
   } while (checkLocInSnake(foodLoc));
 }
 
@@ -278,7 +253,7 @@ function initializeSnake() {
   snakeLoc.push(snakeHead);
 
   snakeLen = 1;
-  dir = randGen() * 4 | 0;
+  dir = Math.random() * 4 | 0;
   gameDelay = 250;
 }
 
@@ -342,47 +317,52 @@ function computeNextSnakeLoc() {
 }
 
 function displayGameOver() {
-  ctx.font = "32px Lucida Sans Serif";
-  ctx.fillStyle = "#0095DD";
+  ctx.font = "32px Arial";
+  ctx.fillStyle = fontColor;
   displayText = "Game Over";
-  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2);
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 - 20);
+  displayText = "Press space or double click game field to restart";
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 + 20);
   togglePlayHandler(false);
 }
 
 function displayStartMsg() {
+  ctx.fillStyle = canvasBkgColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.font = "32px Arial";
-  ctx.fillStyle = "#0095DD";
+  ctx.fillStyle = fontColor;
   displayText = "Double click to start";
-  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 - 80); // -ctx.measureText(displayText).height);
-  displayText = "Double click at any time to restart game";
-  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 - 40); // + ctx.measureText(displayText).height);
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 - 80);
+  displayText = "Double click game field at any time to restart game";
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 - 40);
   displayText = "Use arrow/WASD keys to play";
-  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2); // + ctx.measureText(displayText).height);
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2);
   displayText = "Use space bar to pause";
-  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 + 40); // + ctx.measureText(displayText).height);
-  displayText = "Double click page background for a surprise";
-  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 + 80); // + ctx.measureText(displayText).height);
-
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 + 40);
+  displayText = "Press i to display help again";
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 + 80);
+  displayText = "Double click anywhere for a surprise";
+  ctx.fillText(displayText, canvas.width / 2 - ctx.measureText(displayText).width / 2, canvas.height / 2 + 120);
 }
 
 function applyWinterTheme() {
   mode = 'winter';
-  canvasBkgColor = '#ACADC2';
+  canvasBkgColor = '#CDCCDA';
   changeCSS('css/winter.css', 0);
 
   title = document.getElementById("siteTitle");
-  title.innerHTML = "Winter Snake"
-  drawSnakeField();
+  title.innerHTML = "Winter Snake";
+  fontColor = '#010440';
 }
 
 function applyHolidayTheme() {
-  mode = 'christmas'
-  canvasBkgColor = '#FFFFFF'
+  mode = 'christmas';
+  canvasBkgColor = '#FFFFFF';
+  fontColor = '#2A0403';
   changeCSS('css/holiday.css', 0);
 
   title = document.getElementById("siteTitle");
   title.innerHTML = "Christmas Snake";
-  drawSnakeField();
 }
 
 
@@ -400,9 +380,26 @@ function changeCSS(cssFile, cssLinkIndex) {
 
 function applyNormalTheme() {
   mode = 'none'
-  canvasBkgColor = '#FFFFFF'
+  canvasBkgColor = '#FFFFFF';
+  fontColor = '#7B0AA4';
   changeCSS('css/main.css', 0);
   title = document.getElementById("siteTitle");
   title.innerHTML = "Snake";
-  drawSnakeField();
+}
+
+function applyNewTheme(themeName) {
+  if (themeName === 'winter') {
+    applyWinterTheme();
+  } else if (themeName === 'none') {
+    applyNormalTheme();
+  } else if (themeName === 'christmas') {
+    applyHolidayTheme();
+  }
+  if (gameNotStarted) {
+    displayStartMsg();
+  } else if (gameOver) {
+    displayGameOver();
+  } else {
+    drawSnakeField();
+  }
 }

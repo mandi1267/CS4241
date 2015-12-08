@@ -5,14 +5,15 @@
 }
 #top {
   width: 100%;
-  background-color: #4E0805;
-  color: #B8C591;
+  background-color: #1B0B38;
+  color: #E814FF;
   top: 0;
   left: 0;
   right: 0;
   position: fixed;
   height: 5.5em;
   text-align: center;
+  box-shadow: 0 0 20px #000;
 }
 canvas {
   margin: 0 auto;
@@ -22,14 +23,13 @@ canvas {
 }
 #pageBody {
   margin-top: 5.5em;
-  background-color: #F2EFDF;
   color: #211426;
   margin-left: auto;
   margin-right: auto;
   padding-top: 1em;
 }
 body {
-  overflow: hidden;
+  background-color: #847A82;
 }
 #gameBorder {
   padding-left: 3em;
