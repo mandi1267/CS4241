@@ -1,3 +1,6 @@
+// Author: Amanda Adkins
+// website: https://aaadkins-cs4241-assignment6.herokuapp.com/
+
 var canvas;
 var ctx;
 
