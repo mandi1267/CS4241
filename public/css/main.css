@@ -67,6 +67,7 @@ img {
 #topBar {
   padding: 2em;
 }
+
 .newsError {
   background-color: #FFFFFF;
   box-shadow: 0 0 20px #000;
@@ -79,7 +80,12 @@ img {
   padding: 1em;
 }
 
-.titleLink a{
+.titleLink a {
   text-decoration: none;
   color: black;
+}
+
+.titleLink a:hover{
+  text-decoration: none;
+  color: #E814FF;
 }
