@@ -2,26 +2,35 @@
 <html lang="en">
 
 <head>
-  <title>News Manager</title>
+  <title>Newsbook</title>
   <meta charset="utf-8">
+  <script src="http://underscorejs.org/underscore-min.js"></script>
   <link rel="stylesheet" href="css/main.css">
   <!-- Author: Amanda Adkins -->
-  <script src="http://underscorejs.org/underscore-min.js"></script>
   <script src="templates.js"></script>
   <script src="client.js"></script>
 </head>
 
 <body id="content" onload="loadAllArticles()">
   <div id=top>
-    <h1 id="siteTitle">News Manager</h1>
+    <h1 id="siteTitle">newsbook</h1>
     <div id="topBar">
+      <span id="loadingLabel" hidden=''>Processing new article...</span>
       <input type="text" placeholder="Enter your website URL" id="inputURLBox"></input>
       <button onclick="newWebsite()">Add Website</button>
     </div>
   </div>
-
   <div id=pageBody>
-    <div id="articleBody">  </div>
+    <section id="alignSide" class="fullWidth">
+      <div id="viewSelectorContents">
+        <div class="btn-group" role="group" aria-label="...">
+          <button type="button" class="btn btn-default" onclick=switchToList()>List</button>
+          <button type="button" class="btn btn-default" onclick=switchToTiles()>Tile</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="articleBody" class="fullWidth"> </div>
   </div>
 </body>
 

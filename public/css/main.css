@@ -12,31 +12,29 @@
   right: 0;
   position: fixed;
   height: 5.5em;
-  padding-left: 3em;
+  padding-left: 1em;
   box-shadow: 0 0 20px #000;
 }
-
-#siteTitle{
-  width: 50%;
+#siteTitle {
+  float: left;
 }
 #pageBody {
   margin-top: 5.5em;
   color: #211426;
   margin-left: auto;
   margin-right: auto;
-  padding-top: 1em;
 }
 body {
   background-color: #847A82;
 }
-.newsItem {
+.newsRow {
   background-color: #FFFFFF;
   box-shadow: 0 0 20px #000;
   display: block;
   float: left;
-  font-size: small;
-  width: 100%;
   margin: 1em;
+  padding: 1em;
+  font-size: small;
 }
 .newsInfo {
   float: left;
@@ -63,26 +61,71 @@ img {
 }
 #topBar {
   float: right;
+  line-height: 5.5em;
+  margin-right: 5em;
 }
-
 .newsError {
-  background-color: #FFFFFF;
-  box-shadow: 0 0 20px #000;
-  display: block;
   float: left;
   font-size: small;
-  width: 100%;
-  margin-right: -3em;
   margin: 1em;
   padding: 1em;
 }
-
 .titleLink a {
   text-decoration: none;
   color: black;
 }
-
-.titleLink a:hover{
+.titleLink a:hover {
   text-decoration: none;
   color: #E814FF;
+}
+.news {
+  background-color: #FFFFFF;
+  box-shadow: 0 0 20px #000;
+  display: block;
+  margin: 1em;
+}
+.fullWidth {
+  width: 100%;
+}
+.news button {
+  float: right;
+  background-color: transparent;
+  border-style: none;
+  visibility: hidden;
+  width: 3em;
+  height: 1em;
+}
+.news:hover button {
+  visibility: visible;
+}
+.keywords {
+  font-size: x-small;
+}
+.newsTile {
+  float: left;
+  position: relative;
+  width: 15%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 30em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  font-size: x-small;
+}
+.newsTile a img {
+  max-height: 50%;
+}
+.newsTile button {
+  margin: 1em;
+}
+#alignSide {
+  height: 2em;
+  margin: 0;
+}
+#viewSelectorContents {
+  float: right;
+  padding: 0;
+  margin: 0;
+  line-height: 1em;
 }

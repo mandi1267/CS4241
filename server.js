@@ -58,6 +58,11 @@ app.post('/addArticle', function(req, res) {
   });
 });
 
+app.post('/deleteArticle', function(req, res) {
+  deleteArticle(parseInt(req.body.idToDelete));
+  res.send();
+});
+
 app.get('/allArticles', function(req, res) {
   res.send(JSON.stringify(newsList));
 });
