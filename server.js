@@ -1,5 +1,5 @@
 // Author: Amanda Adkins
-// Website: https://aaadkins-cs4241-assignment6.herokuapp.com/
+// Website: https://aaadkins-cs4241-assignment7.herokuapp.com/
 var express = require('express');
 var path = require('path');
 var fs = require('fs');
@@ -14,30 +14,6 @@ var maxIndex = 0;
 
 var newsList = [];
 
-var compiled = _.template(
-  "<div class='newsItem'>" +
-  "<div class='newsInfo'>" +
-  "<h2 class='titleLink'><a href=<%= url %>><%= articleTitle %></a></h2>" +
-  "<p>Date: <%= datePosted %></p>" +
-  "<p><%= newsDescription %></p>" +
-  "<p class='keywords'>Keywords: <%= keywords %></p>" +
-  "<p>From: <%= sourceSite %></p>" +
-  "<a href=https://www.facebook.com/dialog/share?app_id=145634995501895&amp;display=popup&amp;href=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2F&amp;redirect_uri=https%3A%2F%2Fdevelopers.facebook.com%2Ftools%2Fexplorer>Share on facebook</a>" +
-  "<p onclick='callfacebook(event)'>Facebook</p>" +
-  "<div class='fb-share-button' data-href='<%= url %>' data-layout='icon'></div> " +
-  "</div> " +
-  "<div class='newsPhoto'>" +
-  "<a href=<%= thumbnail %>><img src='<%= thumbnail %>'/></a>" +
-  "</div>" +
-  "</div>"
-);
-
-var errorTemplate = _.template(
-  "<div class='newsError'>" +
-  "<h2>Error loading <%= urlName %>. Sorry! </h2>" +
-  "</div>"
-);
-
 function NewsItem(newTitle, newDate, newDescription, newAuthor, newHomePage, newThumbnail, newID, newIndex, newURL, newKeywords) {
   this.articleTitle = newTitle;
   this.datePosted = newDate;
@@ -51,6 +27,10 @@ function NewsItem(newTitle, newDate, newDescription, newAuthor, newHomePage, new
   this.keywords = newKeywords;
 }
 
+function NewsLoadingError(newErrorMsg) {
+  this.errorMsg = newErrorMsg;
+}
+
 var app = express();
 var port = process.env.PORT || 3000;
 
@@ -60,27 +40,36 @@ app.use(bodyParser.urlencoded({
   extended: true
 })); // support encoded bodies
 
+
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.use(express.static(path.join(__dirname, '/public')));
+app.use('/scripts', express.static(__dirname + '/node_modules/bootstrap/dist/'));
 
 app.listen(port, function() {
   console.log('App is listening on port ' + port);
 });
 
 app.post('/addArticle', function(req, res) {
-  console.log("Article: " + req.body.newURL);
-  parseArticleURL(req.body.newURL, function(metaText) {
-    console.log("Meta: " + metaText);
-
-    res.send(metaText);
+  parseArticleURL(req.body.newURL, function(addTextResult) {
+    res.send(addTextResult);
   });
 });
 
 app.get('/allArticles', function(req, res) {
-  res.send("Articles text");
+  res.send(JSON.stringify(newsList));
+});
+
+readAllArticles(function(newList) {
+  newsList = newList;
+  maxID = -1;
+  maxIndex = -1;
+  for (i = 0; i < newsList.length; i++) {
+    maxID = Math.max(newsList[i].ID, maxID);
+    maxIndex = Math.max(newsList[i].ID, maxIndex);
+  }
 });
 
 function parseArticleURL(addURL, callback) {
@@ -92,7 +81,6 @@ function parseArticleURL(addURL, callback) {
     if (!error && response.statusCode == 200) {
       siteHTML = body;
       handler = new htmlparser.DomHandler(function(error, dom) {
-        console.log(addURL);
         if (error) {
           console.log("error " + error);
         } else {
@@ -104,7 +92,7 @@ function parseArticleURL(addURL, callback) {
       parser.write(siteHTML);
       parser.done();
     } else {
-      callback(generateErrorString(addURL));
+      callback(JSON.stringify(new NewsLoadingError(addURL)));
       console.log("ERROR IN RETRIEVAL");
       console.log(error);
       // display link could  not be added
@@ -112,16 +100,34 @@ function parseArticleURL(addURL, callback) {
   });
 }
 
-function readAllArticles() {
+function readAllArticles(callbackFunc) {
+  var fileStream = fs.createReadStream(path.join(__dirname, 'public/articlesFile.txt'));
+  var articlesString = "";
 
+  fileStream.on('data', function(data) {
+    articlesString += data.toString();
+  });
+
+  fileStream.on('end', function() {
+    //console.log("hi");
+    //callbackFunc(articlesString);
+    callbackFunc(JSON.parse(articlesString));
+  });
 }
 
-function writeArticle(url) {
-
+function deleteArticle(newsArticleId) {
+  for (i = 0; i < newsList.length; i++) {
+    if (newsList[i].ID === newsArticleId) {
+      newsList.splice(i, 1);
+      writeAllArticles(newsList);
+      break;
+    }
+  }
 }
 
-function deleteArticle(url) {
-
+function writeAllArticles(listOfArticles) {
+  var fileStream = fs.createWriteStream(path.join(__dirname, 'public/articlesFile.txt'));
+  fileStream.write(JSON.stringify(listOfArticles));
 }
 
 function parseHead(headObj, pageURL, callback) {
@@ -137,9 +143,6 @@ function parseHead(headObj, pageURL, callback) {
     objItemProp = htmlparser.DomUtils.getAttributeValue(metas[i], 'itemprop');
 
     if (!((typeof objName === 'undefined') || (typeof objContent === 'undefined'))) {
-      console.log("NAME: " + objName);
-      console.log('CONTENT: ' + objContent);
-      console.log('');
       if ((objName === 'author') && (typeof(dataHashMap.get(objName)) !== 'undefined')) {
         dataHashMap.set(objName, dataHashMap.get(objName) + ', ' + objContent);
       } else {
@@ -170,36 +173,15 @@ function parseHead(headObj, pageURL, callback) {
 
   newNews = new NewsItem(newTitle, newDate, newDescription, newAuthor, newWebsiteDomain, newThumbnail, newID, newIndex, newURL, newKeywords);
   newsList.unshift(newNews);
-  callback(generateNewNewsBox(newNews));
-}
-
-function generateNewNewsBox(newNews) {
-  newsHTML = compiled(newNews);
-  return newsHTML;
-}
-
-function generateNewsListBox(newsToShow) {
-  str = "";
-  newsToShow.forEach(function(p, i) {
-    str += compiled(p);
-  });
-  return str;
-}
-
-function generateErrorString(errorURL) {
-  var errorObj = {
-    urlName: errorURL,
-  };
-  return errorTemplate(errorObj);
+  callback(JSON.stringify(newNews));
+  writeAllArticles(newsList);
 }
 
 function getStringRepFromHashmap(map, fieldName, siteURL) {
   field = map.get(fieldName);
   if (typeof field !== 'undefined') {
-    console.log(fieldName + ' defined');
     return field;
   } else {
-    console.log(fieldName);
     if (fieldName === 'og:site_name') {
       return parseDomain(siteURL);
     } else {
@@ -236,7 +218,6 @@ function getFieldFromHashmap(metasHashMap, field) {
 }
 
 function parseDomain(url) {
-  console.log(url);
   var domain;
   //find & remove protocol (http, ftp, etc.) and get domain
   if (url.indexOf("://") <= -1) {
@@ -245,7 +226,6 @@ function parseDomain(url) {
     domain = url.split('/')[2];
   }
 
-  console.log('domain: ' + domain);
   //find & remove port number
   domain = domain.split(':')[0];
 

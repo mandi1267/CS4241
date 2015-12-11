@@ -1,8 +1,0 @@
-var compiled = _.template(
-  "<div class='post'>" +
-  "<h2><%= name %></h2>" +
-  "<p><%= body %></p>" +
-  "<p><%= dislikes %></p>" +
-  "<div class='comments'><%= (function() { return comments.join('<br /><br />') })() %> </div>" +
-  "</div>"
-);
