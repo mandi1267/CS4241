@@ -88,7 +88,11 @@ function displayAllArticles(articlesList) {
   articlesHMTL = "";
   articlesList.forEach(function(p, i) {
     if (mode === 'listMode') {
-      articlesHMTL += articleListTemplate(p);
+      if (p.keywords === "") {
+        articlesHMTL += articleListNoKeywords(p);
+      } else {
+        articlesHMTL += articleListTemplate(p);
+      }
     } else {
       articlesHMTL += articleTileTemplate(p);
     }
