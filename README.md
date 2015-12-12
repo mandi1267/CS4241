@@ -1,14 +1,12 @@
 Amanda Adkins
-Assignment 6
-URL: https://aaadkins-cs4241-assignment6.herokuapp.com/
+Assignment 7
+URL: http://aaadkins-assignment7.herokuapp.com/
 
-Events:
-In my assignment, I listen for double click, touch start, touch end, key press, and key down events. Bubbling is used to detect double clicks on both the canvas and the page body. These are used to restart the game of snake and change the theme respectively (stopPropagation could be done in the canvas double click listener if it would be better not to change the theme when restarting a game, but I wanted to make sure to demonstrate that both double click listeners could intercept the double click event).
-
-Theming Choices:
-I have 3 different themes that can be switched between. The first is a plain theme with a grey background and purple accents.
-The second is a winter theme, which is blue and white.
-The last is a holiday theme, which is white and red.
 
 Technical Achievement:
-For my technical achievement, I made a simple variant of the snake game. This involved using an html canvas and starting timers, as well as the logic for the game. I also was able to change the style sheet programatically.
+For my technical achievement, I made a website that can be used to aggregate news articles (or other websites). The user provides a URL and the website gets the HTML for the given URL and parses the meta data to get key information about the website, such as the date added, author, keywords about the article, and a thumbnail image for the website. The user can also delete news items by hovering over a news object and clicking the x that shows up in the top right corner of the item.
+
+There are two views for this website: tile and list view. List view displays larger blocks for each website with more information. Tile view condenses the information and can show several more articles.
+
+Template Use:
+I used 4 different templates. One template is for displaying to the user that there was an error parsing the metadata from their site. Two others are used to display the list view form (one for full information, the other for displaying articles missing keywords). The final template is used to make the html for the tile view news items.

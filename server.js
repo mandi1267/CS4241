@@ -1,5 +1,5 @@
 // Author: Amanda Adkins
-// Website: https://aaadkins-cs4241-assignment7.herokuapp.com/
+// Website: http://aaadkins-assignment7.herokuapp.com/
 var express = require('express');
 var path = require('path');
 var fs = require('fs');

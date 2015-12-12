@@ -1,3 +1,5 @@
+/* Amanda Adkins, website: http://aaadkins-assignment7.herokuapp.com/ */
+
 var articlesList = [];
 
 var mode = 'listMode';
