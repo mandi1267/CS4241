@@ -1,162 +1,68 @@
 /* Amanda Adkins, website: http://aaadkins-assignment7.herokuapp.com/ */
 
-var articlesList = [];
+maxYakID  = 0;
 
-var mode = 'listMode';
+userUppedYaks = [];
+userDownedYaks = [];
 
-function newWebsite() {
-  urlBox = document.getElementById("inputURLBox");
-  val = urlBox.value;
-  if (val === "") {
-    // do nothing
-    return;
-  }
-  console.log(val);
+allYaks = [];
 
-  urlBox.value = "";
-  loading = document.getElementById('loadingLabel');
-  loading.hidden = false;
-  handleXMLHTTPPost('addArticle', displayNewSite, 'newURL=' + val);
+function onPageLoad() {
+  // get yaks from server
+  allYaks = [];
+  displayAllYaks(allYaks);
+  // check if userID in localstorage
+
 }
 
-function displayNewSite(returnedObjString) {
-  returnedObj = JSON.parse(returnedObjString);
-  console.log(returnedObj);
-  displayHTML = "";
-  console.log(typeof returnedObj)
-  if (typeof returnedObj.errorMsg === 'undefined') {
-    console.log("Adding newsitem");
-    articlesList.unshift(returnedObj);
-    if (mode === 'listMode') {
-      displayedHTML = articleListTemplate(returnedObj);
-    } else {
-      displayedHTML = articleTileTemplate(returnedObj);
-    }
+
+function Yak(timestamp, yakMsg, gpsLoc, replies, votes, userID, yakID, vote) {
+  this.timestamp = timestamp;
+  this.yakMsg = yakMsg;
+  this.votes = votes;
+  this.replies = replies;
+  this.gpsLoc = gpsLoc;
+  this.userID = userID;
+  this.yakID = yakID;
+  this.vote = vote;
+}
+
+function makeNewYak(yakMsg, userID) {
+  timestamp = Date.now();
+  votes = 0;
+  replies = [];
+  maxYakID += 1;
+  yakID = maxYakID;
+  if (navigator.geolocation) {
+    gpsLoc = navigator.geolocation.getCurrentPosition();
+    console.log(gpsLoc);
   } else {
-    displayedHTML = errorTemplate(returnedObj);
-    console.log(displayedHTML);
+    // don't know what to do here
+    gpsLoc = "";
   }
-  errors = document.getElementsByClassName('newsError');
-  for (i = 0; i < errors.length; i++) {
-    errors[i].remove();
-  }
-  console.log(displayedHTML);
-  siteBoxes = document.getElementById('articleBody');
-  currentText = siteBoxes.innerHTML;
-  console.log(currentText);
-  newText = displayedHTML + currentText;
-  siteBoxes.innerHTML = newText;
-  console.log("NEW TEXT: " + newText);
-
-  loading.hidden = true;
+  newYak = Yak(timestamp, yakMsg, gpsLoc, replies, votes, userID, yakID, 'noVote');
+  return newYak;
 }
 
-
-function handleXMLHTTPPost(postTo, callbackFunc, postText) {
-  console.log("posting " + postText)
-  var xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange = function() {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-      callbackFunc(xmlHttp.responseText);
-    }
-  };
-  xmlHttp.open("POST", postTo, true); // true for asynchronous
-
-  xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xmlHttp.send(postText);
-}
-
-function handleXMLHTTPGet(getFrom, callbackFunc) {
-  var xmlHttp = new XMLHttpRequest();
-  xmlHttp.onreadystatechange = function() {
-    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-      callbackFunc(xmlHttp.responseText);
-    }
-  };
-  xmlHttp.open("GET", getFrom, true); // true for asynchronous
-  xmlHttp.send();
-}
-
-function loadAllArticles() {
-  handleXMLHTTPGet('allArticles', addAllArticles);
-}
-
-function addAllArticles(responseText) {
-  articlesList = JSON.parse(responseText);
-  displayAllArticles(articlesList);
-}
-
-function displayAllArticles(articlesList) {
-  articlesHMTL = "";
-  articlesList.forEach(function(p, i) {
-    if (mode === 'listMode') {
-      if (p.keywords === "") {
-        articlesHMTL += articleListNoKeywords(p);
-      } else {
-        articlesHMTL += articleListTemplate(p);
-      }
-    } else {
-      articlesHMTL += articleTileTemplate(p);
-    }
+function displayAllYaks(yaksList) {
+  yakHTML = "";
+  yaksList.forEach(function(p, i) {
+    yakHTML += yakTemplate(p);
   });
+  yakBody = document.getElementById('yakBody');
+  yakBody.innerHTML = yakHTML;
+}
 
-  errors = document.getElementsByClassName('newsError');
-  for (i = 0; i < errors.length; i++) {
-    errors[i].remove();
+function didUserUpYak(yakID) {
+  if (userUppedYaks.indexOf(yakID) != -1) {
+    return true;
   }
-  siteBoxes = document.getElementById('articleBody');
-  currentText = siteBoxes.innerHTML;
-  console.log("adding articles");
-  console.log(articlesHMTL);
-  siteBoxes.innerHTML = articlesHMTL + currentText;
+  return false;
 }
 
-function callfacebook(e) {
-  console.log(e);
-  console.log(e.target);
-}
-
-
-function NewsItem(newTitle, newDate, newDescription, newAuthor, newHomePage, newThumbnail, newID, newIndex, newURL, newKeywords) {
-  this.articleTitle = newTitle;
-  this.datePosted = newDate;
-  this.newsDescription = newDescription;
-  this.author = newAuthor;
-  this.sourceSite = newHomePage;
-  this.thumbnail = newThumbnail;
-  this.ID = newID;
-  this.newsIndex = newIndex;
-  this.url = newURL;
-  this.keywords = newKeywords;
-}
-
-function deleteClicked(e) {
-  console.log(e.target);
-  newsDiv = e.target.parentElement.parentElement;
-  console.log(newsDiv.id);
-  newsDivID = newsDiv.id.slice(7);
-
-  console.log(newsDivID);
-  for (i = 0; i < articlesList.length; i++) {
-    if (articlesList[i].ID === parseInt(newsDivID)) {
-      articlesList.splice(i, 1);
-    }
+function didUserDownYak(yakID) {
+  if (userDownedYaks.indexOf(yakID) != -1) {
+    return true;
   }
-
-  newsDiv.remove();
-  handleXMLHTTPPost('deleteArticle', function() {}, 'idToDelete=' + newsDivID);
-}
-
-function switchToList() {
-  mode = 'listMode';
-  siteBoxes = document.getElementById('articleBody');
-  siteBoxes.innerHTML = "";
-  displayAllArticles(articlesList);
-}
-
-function switchToTiles() {
-  mode = 'tileMode'
-  siteBoxes = document.getElementById('articleBody');
-  siteBoxes.innerHTML = "";
-  displayAllArticles(articlesList);
+  return false;
 }

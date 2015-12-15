@@ -1,0 +1,132 @@
+/* Amanda Adkins */
+
+* {
+  font-family: Lucida Sans Unicode;
+}
+#top {
+  width: 100%;
+  background-color: #1B0B38;
+  color: #E814FF;
+  top: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+  height: 5.5em;
+  padding-left: 1em;
+  box-shadow: 0 0 20px #000;
+}
+#siteTitle {
+  float: left;
+}
+#pageBody {
+  margin-top: 5.5em;
+  color: #211426;
+  margin-left: auto;
+  margin-right: auto;
+}
+body {
+  background-color: #847A82;
+}
+.newsRow {
+  background-color: #FFFFFF;
+  box-shadow: 0 0 20px #000;
+  display: block;
+  float: left;
+  margin: 1em;
+  padding: 1em;
+  font-size: small;
+  width: 90%
+}
+.newsInfo {
+  float: left;
+  width: 60%;
+  margin: 1em;
+}
+.newsPhoto {
+  float: right;
+  width: 25%;
+  padding: 1em;
+  height: 100%;
+  max-height: 20em;
+}
+.newsPhoto a {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+img {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+}
+#topBar {
+  float: right;
+  line-height: 5.5em;
+  margin-right: 5em;
+}
+.newsError {
+  float: left;
+  font-size: small;
+  margin: 1em;
+  padding: 1em;
+}
+.titleLink a {
+  text-decoration: none;
+  color: black;
+}
+.titleLink a:hover {
+  text-decoration: none;
+  color: #E814FF;
+}
+.news {
+  background-color: #FFFFFF;
+  box-shadow: 0 0 20px #000;
+  display: block;
+  margin: 1em;
+}
+.fullWidth {
+  width: 100%;
+}
+.news button {
+  float: right;
+  background-color: transparent;
+  border-style: none;
+  visibility: hidden;
+  width: 3em;
+  height: 1em;
+}
+.news:hover button {
+  visibility: visible;
+}
+.keywords {
+  font-size: x-small;
+}
+.newsTile {
+  float: left;
+  position: relative;
+  width: 15%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 30em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  font-size: x-small;
+}
+.newsTile a img {
+  max-height: 50%;
+}
+.newsTile button {
+  margin: 1em;
+}
+#alignSide {
+  height: 2em;
+  margin: 0;
+}
+#viewSelectorContents {
+  float: right;
+  padding: 0;
+  margin: 0;
+  line-height: 1em;
+}
