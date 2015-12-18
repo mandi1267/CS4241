@@ -15,3 +15,7 @@
   padding-left: 1em;
   box-shadow: 0 0 20px #000;
 }
+
+.floatRight {
+  float: right;
+}
