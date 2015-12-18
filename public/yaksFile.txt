@@ -1,0 +1,1 @@
+[{"timestamp":"1450414169577","yakMsg":"trg","votes":"0","replies":[""],"gpsLoc":{"coords":{"latitude":"42.2717211","longitude":"-71.8134305","altitude":"","accuracy":"33","altitudeAccuracy":"","heading":"","speed":""},"timestamp":"1450414169596"},"userID":"3","yakID":"411","sessionID":""}]

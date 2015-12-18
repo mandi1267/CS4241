@@ -19,3 +19,14 @@
 .floatRight {
   float: right;
 }
+
+.upped .glyphicon-chevron-up {
+  color: #FF0000;
+}
+.downed .glyphicon-chevron-down {
+  color: #FF0000;
+}
+
+.smallMarginRight {
+  margin-right: 1em;
+}

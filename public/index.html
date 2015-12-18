@@ -16,8 +16,9 @@
   <script src="http://underscorejs.org/underscore-min.js"></script>
   <link rel="stylesheet" href="css/main.css">
   <script src='project.js'></script>
-  <!-- Author: Amanda Adkins -->
-  <script src="templates.js"></script>
+
+  <script src="templates.js">
+  </script>
   <script src="client.js"></script>
 </head>
 
@@ -34,20 +35,9 @@
         </button>
         <a class="navbar-brand" href="">YakBak</a>
       </div>
-
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li><a href="/creatorHome">Home <span class="sr-only">(current)</span></a></li>
-          <li class='active'><a href="/createNewEvent">Create Event</a></li>
-        </ul>
-
-        <ul class="nav navbar-nav navbar-right">
-          <li><a onclick="logout()" id="pointerMouse">Logout</a></li>
-        </ul>
-      </div>
   </nav>
-  <div class='container'>
+  <div class='container-fluid'>
+    <div class='col-md-10 col-md-offset-1'>
     <div class='row'>
       <form name='newEvent' id="yakAdder">
         <div class="panel panel-default">
@@ -65,7 +55,7 @@
 
               <div class='col-md-12'>
                 <div class='row'>
-                  <button type="submit" class="floatRight btn btn-primary">Add Yak</button>
+                  <button type="button" class="floatRight btn btn-primary" onclick='addYak()'>Add Yak</button>
                 </div>
               </div>
             </div>
@@ -74,18 +64,15 @@
       </form>
     </div>
     <div class='row'>
-      <div class="panel panel-default">
+      <!-- <div class="panel panel-default">
         <!-- Default panel contents -->
-        <div class="panel-heading">
-          <p>All Yaks</p>
-        </div>
-        <div class="panel-body" id="eventsPanelBody">
-          <div id='yakBody'>
-          </div>
-        </div>
+      <!-- <div class="panel-heading">
+          <p>All Yaks</p> -->
+      <!-- </div> -->
+      <!-- <div class="panel-body" id="eventsPanelBody"> -->
+      <div id='yakBody'>
       </div>
     </div>
-  </div>
   </div>
 </body>
 
